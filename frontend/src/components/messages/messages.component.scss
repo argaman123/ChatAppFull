@@ -1,0 +1,33 @@
+.container {
+  padding: 5px 15px;
+  height: calc(100vh - 150px);
+  max-height: calc(100vh - 160px);
+  overflow: auto;
+  scroll-behavior: smooth;
+  &::-webkit-scrollbar {
+    width: 10px;
+  }
+
+  &::-webkit-scrollbar-track {
+    background: none;
+  }
+
+  &::-webkit-scrollbar-thumb, &::-webkit-scrollbar-thumb:hover {
+    background: #00000050;
+  }
+  .message {
+    width: max-content;
+    font-family: "Roboto Light", serif;
+    margin: 10px 0;
+    padding: 15px;
+    border-radius: 10px;
+    font-size: 25px;
+    background: #28282c;
+    color: #a2a2a2;
+    .content {
+      font-family: "Roboto", serif;
+      font-size: 30px;
+      color: #eeeeee;
+    }
+  }
+}

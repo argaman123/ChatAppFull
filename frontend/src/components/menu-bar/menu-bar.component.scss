@@ -1,0 +1,25 @@
+.container {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  width: calc(100% - 20px);
+  padding: 0 10px;
+  height: 70px;
+  .settings {
+    display: flex;
+    flex-direction: row;
+  }
+  .option {
+    font-family: "Roboto", serif;
+    font-size: 20px;
+    padding: 15px;
+    user-select: none;
+    color: #eeeeee;
+  }
+  .subscribe {
+    background: gold;
+    color: black;
+    border-radius: 15px;
+  }
+}

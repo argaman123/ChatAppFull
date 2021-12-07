@@ -1,0 +1,6 @@
+<div class="container" (keydown.enter)="onSend()">
+  <input class="message" [(ngModel)]="message" placeholder="Type your message here.."/>
+  <div [class.visible]="message.trim().length > 0" class="send">
+    <mat-icon class="icon" (click)="onSend()" aria-hidden="false">send</mat-icon>
+  </div>
+</div>

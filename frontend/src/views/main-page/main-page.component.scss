@@ -1,0 +1,23 @@
+.container {
+  display: flex;
+  flex-direction: column;
+  background: #1e1f21;
+  .menu-container {
+    background: #26272a;
+  }
+  .main-container {
+    display: flex;
+    flex-direction: row;
+    .chat-container {
+      display: flex;
+      flex-direction: column;
+      width: 80%;
+      .messages {
+        background: #17181a;
+      }
+      .message-area {
+        background: #27282a;
+      }
+    }
+  }
+}

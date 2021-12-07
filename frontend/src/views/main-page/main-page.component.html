@@ -1,0 +1,10 @@
+<div class="container">
+  <app-menu-bar *ngIf="registered" class="menu-container">Top bar</app-menu-bar>
+  <div class="main-container">
+    <div class="chat-container">
+      <app-messages class="messages" [messages]="messageHistory"></app-messages>
+      <app-message-area (send)="print($event)" class="message-area"></app-message-area>
+    </div>
+    <app-user-list class="users" [users]="activeUsers" title="Online"></app-user-list>
+  </div>
+</div>
