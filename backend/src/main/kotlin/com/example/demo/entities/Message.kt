@@ -1,4 +1,4 @@
-package com.example.demo.model
+package com.example.demo.entities
 
 import java.util.*
 import javax.persistence.*

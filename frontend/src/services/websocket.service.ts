@@ -20,7 +20,7 @@ export class WebsocketService {
     let ws = new SockJS(this._webSocketEndPoint);
     this._stompClient = Stomp.over(ws);
     const _this = this;
-    _this._stompClient.connect({}, () => {
+    _this._stompClient.connect({username: 'argaman', password: 'arg12345'}, () => {
       _this._stompClient.subscribe("/app/chat", (messages: any) => {
         _this.onMessageReceived(messages, true);
       });
