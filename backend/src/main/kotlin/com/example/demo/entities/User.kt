@@ -1,4 +1,4 @@
-package com.example.demo.model
+package com.example.demo.entities
 
 import javax.persistence.*
 
@@ -9,4 +9,5 @@ data class User(
     @Column(unique = true, length = 20) val nickname: String = "",
     @Column(unique = true, length = 30) val email: String = "",
     val password: String = "",
+    val roles: String
 )

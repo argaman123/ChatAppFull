@@ -24,10 +24,36 @@
     font-size: 25px;
     background: #28282c;
     color: #a2a2a2;
+
+    &.selected {
+      &:hover {
+        background: #3d3d42;
+      }
+      background: #3d3d42;
+      .time {
+        transition: max-height 0.2s, opacity 0.2s, padding-top 0.2s;
+        padding-top: 10px;
+        max-height: unset;
+        opacity: 1;
+      }
+    }
+
+    &:hover {
+      background: #36363b;
+    }
+
     .content {
       font-family: "Roboto", serif;
       font-size: 30px;
       color: #eeeeee;
+      padding-left: 10px;
+    }
+
+    .time {
+      max-height: 0;
+      opacity: 0;
+      font-size: 20px;
+      text-align: right;
     }
   }
 }

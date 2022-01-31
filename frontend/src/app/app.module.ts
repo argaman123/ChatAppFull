@@ -13,10 +13,14 @@ import {MatCardModule} from "@angular/material/card";
 import {MessageAreaComponent} from "../components/message-area/message-area.component";
 import {MenuBarComponent} from "../components/menu-bar/menu-bar.component";
 import {MatInputModule} from "@angular/material/input";
-import {FormsModule} from "@angular/forms";
-import {WebSocketAPI} from "../services/WebSocketAPI";
-import {WebsocketService} from "../services/websocket.service";
-import {HttpHandler} from "@angular/common/http";
+import {FormsModule, ReactiveFormsModule} from "@angular/forms";
+import {WebsocketService} from "../unused/websocket.service";
+import {HTTP_INTERCEPTORS, HttpClient, HttpClientModule, HttpHandler} from "@angular/common/http";
+import {LoginPageComponent} from "../views/login-page/login-page.component";
+import {AuthGuard} from "../unused/AuthGuard";
+import {AuthService} from "../services/auth.service";
+import {MatButtonModule} from "@angular/material/button";
+import {ChatService} from "../services/chat.service";
 
 @NgModule({
   declarations: [
@@ -25,7 +29,8 @@ import {HttpHandler} from "@angular/common/http";
     UserListComponent,
     MessagesComponent,
     MessageAreaComponent,
-    MenuBarComponent
+    MenuBarComponent,
+    LoginPageComponent
   ],
   imports: [
     BrowserModule,
@@ -35,9 +40,12 @@ import {HttpHandler} from "@angular/common/http";
     MatIconModule,
     MatCardModule,
     MatInputModule,
-    FormsModule
+    FormsModule,
+    HttpClientModule,
+    ReactiveFormsModule,
+    MatButtonModule
   ],
-  providers: [WebsocketService],
+  providers: [WebsocketService, AuthGuard, AuthService, ChatService],
   bootstrap: [AppComponent]
 })
 export class AppModule { }
