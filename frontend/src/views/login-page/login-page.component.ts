@@ -1,5 +1,5 @@
 import {Component, EventEmitter, Input, Output} from '@angular/core';
-import {FormControl, FormGroup} from "@angular/forms";
+import {FormControl, FormGroup, Validators} from "@angular/forms";
 import {AuthService} from "../../services/auth.service";
 import {Router} from "@angular/router";
 
@@ -13,8 +13,15 @@ export class LoginPageComponent {
   error: string | null = null
   @Output() submit = new EventEmitter()
   form: FormGroup = new FormGroup({
-    username: new FormControl(''),
-    password: new FormControl(''),
+    username: new FormControl('',[
+      Validators.required,
+      Validators.email
+    ]),
+    password: new FormControl('',[
+      Validators.required,
+      Validators.minLength(8),
+      Validators.maxLength(20),
+    ]),
   });
 
   constructor(private authService: AuthService, private router: Router) {
@@ -35,7 +42,7 @@ export class LoginPageComponent {
               });*/
           },
           error: err => {
-            this.error = err.toString()
+            this.error = "Wrong credentials"
           }
         })
     }

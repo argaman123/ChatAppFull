@@ -1,7 +1,14 @@
-<div class="container">
-  <div class="settings">
-    <div class="option">Change password</div>
-    <div class="option">Change nickname</div>
-  </div>
-  <div class="option subscribe">{{subscribed ? "Cancel" : "Buy one month of"}} subscription</div>
-</div>
+<mat-toolbar color="primary" class="darkMode bar">
+  <mat-toolbar-row>
+    <button mat-icon-button [matMenuTriggerFor]="menu" aria-label="Example icon-button with a menu">
+      <mat-icon>more_vert</mat-icon>
+    </button>
+    <mat-menu #menu="matMenu">
+      <button mat-menu-item>Change password</button>
+      <button mat-menu-item>Change nickname</button>
+      <button mat-menu-item (click)="onSignOut()">Sign out</button>
+    </mat-menu>
+    <span class="spacer"></span>
+    <a mat-flat-button>{{subscribed ? "Cancel" : "Buy one month of"}} subscription</a>
+  </mat-toolbar-row>
+</mat-toolbar>

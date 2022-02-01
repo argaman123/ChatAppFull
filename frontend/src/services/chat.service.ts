@@ -5,6 +5,8 @@ import {HttpClient} from "@angular/common/http";
 import {first, map, Observable, Subject} from "rxjs";
 import {AuthService} from "./auth.service";
 import {Message} from "stompjs";
+import {Router} from "@angular/router";
+import {LoginDataService} from "./login-data.service";
 
 const API = "http://localhost:8080/"
 
@@ -13,25 +15,58 @@ const API = "http://localhost:8080/"
 })
 export class ChatService {
 
-  stompClient: Stomp.Client | undefined
+  private stompClient: Stomp.Client | undefined
 
-  constructor(private http: HttpClient) {
+  constructor(private http: HttpClient, private loginData: LoginDataService) {
   }
 
   connect() {
     return new Observable(subscriber => {
-      if (this.stompClient) {
+      if (this.stompClient?.connected) {
         subscriber.next()
         return
       }
-      let ws = new SockJS(API + "chat-connection");
-      this.stompClient = Stomp.over(ws);
-      this.stompClient.connect({}, () => {
-        subscriber.next()
-      }, err => {
-        subscriber.error(err)
-      })
+      try {
+        let ws = new SockJS(API + "chat-connection");
+        this.stompClient = Stomp.over(ws);
+        this.stompClient.connect({}, () => {
+          this._handleNewMessage()
+          this._handleNewUser()
+          subscriber.next()
+        }, err => {
+          this.loginData.immediateLogout()
+          subscriber.error(err)
+        })
+      } catch (e) {
+        this.loginData.immediateLogout()
+        subscriber.error(e)
+      }
     }).pipe(first())
+  }
+
+  disconnect(callback: (() => void)){
+    this.stompClient?.disconnect(callback)
+  }
+
+  private _onNewMessage = new Subject<ChatMessage>()
+
+  private _handleNewMessage() {
+    const dateFormat = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d{3}\+\d{2}:\d{2}$/ // PROBABLY NEEDS A MORE ABSTRACT SOLUTION
+    function reviver(key: string, value: any) {
+      if (typeof value === "string" && dateFormat.test(value)) {
+        return new Date(value);
+      }
+      return value;
+    }
+
+    this.stompClient?.subscribe("/topic/chat", (message: Message) => {
+      console.log(message)
+      this._onNewMessage.next(JSON.parse(message.body, reviver))
+    })
+  }
+
+  getNewMessage() {
+    return this._onNewMessage.asObservable()
   }
 
   getMessageHistory() {
@@ -44,22 +79,16 @@ export class ChatService {
     }))
   }
 
-  onNewMessage = new Observable<ChatMessage>()
+  private _onNewUser = new Subject<String>()
 
-  getNewMessage() {
-    const dateFormat = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d{3}\+\d{2}:\d{2}$/ // PROBABLY NEEDS A MORE ABSTRACT SOLUTION
-    function reviver(key: string, value: any) {
-      if (typeof value === "string" && dateFormat.test(value)) {
-        return new Date(value);
-      }
-      return value;
-    }
-    return new Observable<ChatMessage>(subscriber => {
-      this.stompClient?.subscribe("/topic/chat", (message: Message) => {
-        console.log(message)
-        subscriber.next(JSON.parse(message.body, reviver))
-      })
+  private _handleNewUser() {
+    this.stompClient?.subscribe("/topic/users", () => {
+      this._onNewUser.next("hi")
     })
+  }
+
+  getUsers() {
+    return this._onNewUser.asObservable()
   }
 
   sendMessage(content: string) {

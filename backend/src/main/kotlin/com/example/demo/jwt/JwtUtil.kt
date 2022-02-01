@@ -43,7 +43,7 @@ class JwtUtil {
             .setSubject(subject)
             .setIssuedAt(Date(System.currentTimeMillis()))
             .setExpiration(expiration)
-            .signWith(SignatureAlgorithm.HS256, SECRET_KEY).compact(), SimpleDateFormat("YYYY-MM-DD hh:mm:ss").format(expiration))
+            .signWith(SignatureAlgorithm.HS256, SECRET_KEY).compact(), SimpleDateFormat("YYYY-MM-dd'T'hh:mm:ssZ").format(expiration))
 
     }
 

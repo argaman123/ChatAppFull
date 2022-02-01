@@ -2,16 +2,16 @@
   display: flex;
   flex-direction: row;
   align-items: center;
-  height: 80px;
+  height: 64px;
   .message {
-    height: calc(100% - 50px);
+    height: calc(100% - 45px);
     width: 100%;
-    font-size: 30px;
+    font-size: 20px;
     border: 0;
     padding: 15px;
-    border-radius: 15px;
+    border-radius: 10px;
     margin: 10px;
-    background: rgba(30, 30, 33, 0);
+    background: rgb(16, 16, 17);
     color: #eeeeee;
     font-family: "Roboto", serif;
 
@@ -25,7 +25,7 @@
     }
   }
   .send {
-    width: 60px;
+    width: 50px;
     height: 100%;
     display: flex;
     max-width: 0;
@@ -33,11 +33,11 @@
     color: transparent;
     transition: all ease 0.5s;
     &.visible {
-      max-width: 60px;
+      max-width: 50px;
       color: #eeeeee;
     }
     .icon {
-      font-size: 35px;
+      font-size: 30px;
       transform: translateX(-4px);
       height: 100%;
       width: 100%;

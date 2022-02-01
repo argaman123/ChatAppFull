@@ -1,4 +1,5 @@
 import {AfterViewChecked, Component, ElementRef, Input, OnInit, ViewChild} from '@angular/core';
+import {ChatService} from "../../services/chat.service";
 
 @Component({
   selector: 'app-messages',
@@ -9,7 +10,7 @@ export class MessagesComponent implements AfterViewChecked{
   @Input() messages!: ChatMessage[]
   @ViewChild('container') container : ElementRef | undefined;
   currentMessage :ChatMessage | null = null
-  constructor() { }
+  constructor(private chat: ChatService) {}
 
   ngAfterViewChecked(): void {
     try {

@@ -21,6 +21,12 @@ import {AuthGuard} from "../unused/AuthGuard";
 import {AuthService} from "../services/auth.service";
 import {MatButtonModule} from "@angular/material/button";
 import {ChatService} from "../services/chat.service";
+import {MatToolbarModule} from "@angular/material/toolbar";
+import {RegisterPageComponent} from "../views/register-page/register-page.component";
+import {MatMenuModule} from "@angular/material/menu";
+import {AuthInterceptor} from "../services/auth.interceptor";
+import {Router} from "@angular/router";
+import {LoginDataService} from "../services/login-data.service";
 
 @NgModule({
   declarations: [
@@ -30,7 +36,8 @@ import {ChatService} from "../services/chat.service";
     MessagesComponent,
     MessageAreaComponent,
     MenuBarComponent,
-    LoginPageComponent
+    LoginPageComponent,
+    RegisterPageComponent
   ],
   imports: [
     BrowserModule,
@@ -43,9 +50,18 @@ import {ChatService} from "../services/chat.service";
     FormsModule,
     HttpClientModule,
     ReactiveFormsModule,
-    MatButtonModule
+    MatButtonModule,
+    MatToolbarModule,
+    MatMenuModule
   ],
-  providers: [WebsocketService, AuthGuard, AuthService, ChatService],
+  providers: [WebsocketService, AuthGuard, AuthService, ChatService, LoginDataService, {
+    provide: HTTP_INTERCEPTORS,
+    useFactory: function(loginData: LoginDataService) {
+      return new AuthInterceptor(loginData);
+    },
+    multi: true,
+    deps: [LoginDataService]
+  }],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

@@ -1,7 +1,7 @@
 .container {
   padding: 5px 15px;
-  height: calc(100vh - 150px);
-  max-height: calc(100vh - 160px);
+  height: calc(100vh - 138px);
+  max-height: calc(100vh - 138px);
   overflow: auto;
   scroll-behavior: smooth;
   &::-webkit-scrollbar {
@@ -19,9 +19,9 @@
     width: max-content;
     font-family: "Roboto Light", serif;
     margin: 10px 0;
-    padding: 15px;
+    padding: 10px;
     border-radius: 10px;
-    font-size: 25px;
+    font-size: 20px;
     background: #28282c;
     color: #a2a2a2;
 
@@ -32,7 +32,7 @@
       background: #3d3d42;
       .time {
         transition: max-height 0.2s, opacity 0.2s, padding-top 0.2s;
-        padding-top: 10px;
+        padding-top: 5px;
         max-height: unset;
         opacity: 1;
       }
@@ -44,15 +44,15 @@
 
     .content {
       font-family: "Roboto", serif;
-      font-size: 30px;
+      font-size: 25px;
       color: #eeeeee;
-      padding-left: 10px;
+      padding-left: 8px;
     }
 
     .time {
       max-height: 0;
       opacity: 0;
-      font-size: 20px;
+      font-size: 17px;
       text-align: right;
     }
   }

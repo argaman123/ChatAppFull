@@ -25,7 +25,7 @@ class JwtAuthFilter @Autowired constructor(
     }
 
     private val skipFilterUrls: List<String> =
-        listOf("/authenticate")
+        listOf("/auth/**")
 
     override fun shouldNotFilter(request: HttpServletRequest): Boolean {
         return skipFilterUrls.stream().anyMatch { url: String ->

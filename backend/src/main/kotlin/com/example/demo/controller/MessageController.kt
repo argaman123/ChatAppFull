@@ -14,6 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.ResponseEntity
 import org.springframework.messaging.handler.annotation.MessageMapping
 import org.springframework.messaging.handler.annotation.SendTo
+import org.springframework.messaging.simp.annotation.SubscribeMapping
 import org.springframework.security.authentication.AuthenticationManager
 import org.springframework.security.authentication.BadCredentialsException
 import org.springframework.security.core.Authentication
@@ -27,33 +28,10 @@ import javax.servlet.http.Cookie
 import javax.servlet.http.HttpServletResponse
 
 
-@Controller
 @RestController
 class MessageController @Autowired constructor(
     private val messageRepository: MessageRepository,
-    private val userRepository: UserRepository,
-    private val authenticationManager: AuthenticationManager,
-    private val userDetailsService: RealUserDetailsService,
-    private val jwtUtil: JwtUtil
 ) {
-
-    @PostMapping("/authenticate")
-    fun authenticate(@RequestBody authenticationRequest: AuthenticationRequest, res :HttpServletResponse): ResponseEntity<String> {
-        try {
-            authenticationManager.authenticate(authenticationRequest.getToken())
-        } catch (e :BadCredentialsException){
-            throw Exception("Incorrect credentials", e)
-        }
-        val userDetails = userDetailsService.loadUserByUsername(authenticationRequest.username)
-        val jwt = jwtUtil.generateToken(userDetails)
-        val cookie = Cookie("jwt", jwt.token)
-        cookie.path = "/"
-        //cookie.secure = true
-        cookie.isHttpOnly = true
-        res.addCookie(cookie)
-        return ResponseEntity.ok(jwt.expiration)
-    }
-
     @GetMapping("/chat-history")
     fun chatInit() : ResponseEntity<List<ChatMessage>> {
         return ResponseEntity.ok(messageRepository.findAll().map { ChatMessage(it) })
@@ -66,6 +44,13 @@ class MessageController @Autowired constructor(
         val chatMessage = ChatMessage(user.nickname, message.content)
         messageRepository.saveAndFlush(Message(chatMessage, user))
         return chatMessage
+    }
+
+    @SubscribeMapping("/topic/users")
+    @SendTo("/topic/users")
+    fun test() :String{
+        println("hello")
+        return "hello"
     }
 
 }
