@@ -2,9 +2,8 @@ interface User {
   nickname: string
 }
 
-interface Message {
-  nickname: string
-  email? :String
-  datetime: Date
+interface ChatMessage {
+  from :string
+  datetime :Date
   content: string
 }

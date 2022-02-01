@@ -13,10 +13,20 @@ import {MatCardModule} from "@angular/material/card";
 import {MessageAreaComponent} from "../components/message-area/message-area.component";
 import {MenuBarComponent} from "../components/menu-bar/menu-bar.component";
 import {MatInputModule} from "@angular/material/input";
-import {FormsModule} from "@angular/forms";
-import {WebSocketAPI} from "../services/WebSocketAPI";
-import {WebsocketService} from "../services/websocket.service";
-import {HttpHandler} from "@angular/common/http";
+import {FormsModule, ReactiveFormsModule} from "@angular/forms";
+import {WebsocketService} from "../unused/websocket.service";
+import {HTTP_INTERCEPTORS, HttpClient, HttpClientModule, HttpHandler} from "@angular/common/http";
+import {LoginPageComponent} from "../views/login-page/login-page.component";
+import {AuthGuard} from "../unused/AuthGuard";
+import {AuthService} from "../services/auth.service";
+import {MatButtonModule} from "@angular/material/button";
+import {ChatService} from "../services/chat.service";
+import {MatToolbarModule} from "@angular/material/toolbar";
+import {RegisterPageComponent} from "../views/register-page/register-page.component";
+import {MatMenuModule} from "@angular/material/menu";
+import {AuthInterceptor} from "../services/auth.interceptor";
+import {Router} from "@angular/router";
+import {LoginDataService} from "../services/login-data.service";
 
 @NgModule({
   declarations: [
@@ -25,7 +35,9 @@ import {HttpHandler} from "@angular/common/http";
     UserListComponent,
     MessagesComponent,
     MessageAreaComponent,
-    MenuBarComponent
+    MenuBarComponent,
+    LoginPageComponent,
+    RegisterPageComponent
   ],
   imports: [
     BrowserModule,
@@ -35,9 +47,21 @@ import {HttpHandler} from "@angular/common/http";
     MatIconModule,
     MatCardModule,
     MatInputModule,
-    FormsModule
+    FormsModule,
+    HttpClientModule,
+    ReactiveFormsModule,
+    MatButtonModule,
+    MatToolbarModule,
+    MatMenuModule
   ],
-  providers: [WebsocketService],
+  providers: [WebsocketService, AuthGuard, AuthService, ChatService, LoginDataService, {
+    provide: HTTP_INTERCEPTORS,
+    useFactory: function(loginData: LoginDataService) {
+      return new AuthInterceptor(loginData);
+    },
+    multi: true,
+    deps: [LoginDataService]
+  }],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

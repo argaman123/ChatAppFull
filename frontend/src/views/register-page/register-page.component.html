@@ -1,0 +1,32 @@
+<div class="container darkMode">
+  <mat-card class="form">
+    <mat-card-title>Register</mat-card-title>
+    <mat-card-content>
+      <form class="fields" [formGroup]="form" (ngSubmit)="onSubmit()">
+        <mat-form-field>
+          <input type="email" matInput placeholder="Email" formControlName="email" email required>
+          <mat-error *ngIf="form.get('email')?.errors?.['email']">
+            Email is not valid.
+          </mat-error>
+        </mat-form-field>
+        <mat-form-field>
+          <input type="text" matInput placeholder="Nickname" formControlName="nickname" required>
+          <mat-error *ngIf="form.get('nickname')?.errors?.['maxlength']">
+            Nicknames must be shorter than 20 letters.
+          </mat-error>
+        </mat-form-field>
+        <mat-form-field>
+          <input type="password" matInput placeholder="Password" formControlName="password" required autocomplete="on">
+          <mat-error *ngIf="form.get('password')?.errors?.['minlength'] || form.get('password')?.errors?.['maxlength']">
+            Password must have 8 to 20 characters.
+          </mat-error>
+          <mat-error *ngIf="form.get('password')?.errors?.['pattern']">
+            Password must include digits and letters.
+          </mat-error>
+        </mat-form-field>
+        <mat-error style="white-space: pre-wrap">{{errors}}</mat-error>
+        <button type="submit" mat-raised-button color="primary">Register</button>
+      </form>
+    </mat-card-content>
+  </mat-card>
+</div>

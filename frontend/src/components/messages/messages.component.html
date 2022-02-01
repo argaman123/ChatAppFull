@@ -1,5 +1,6 @@
-<div class="container" #container>
-  <div class="message" *ngFor="let message of messages">
-    <span class="nickname">{{message.nickname}}</span> - <span class="time">{{message.datetime.toLocaleTimeString()}}</span>: <span class="content">{{message.content}}</span>
+<div class="container" #container (click)="onUnselect()">
+  <div class="message" *ngFor="let message of messages" [ngClass]="{selected: message == currentMessage}" (click)="$event.stopPropagation(); onSelect(message)">
+    <span class="nickname">{{message.from}}</span> <span class="content">{{message.content}}</span>
+    <div class="time">{{message.datetime | date:'dd.MM.yy HH:mm'}}</div>
   </div>
 </div>
