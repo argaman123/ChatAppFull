@@ -45,6 +45,34 @@ export class AuthService {
     }).pipe(first())
   }
 
+  guest(credentials : { nickname :string }){
+    return new Observable(subscriber => {
+      try {
+        this.http.post(API + "guest", credentials, {
+          responseType: 'text',
+          withCredentials: true
+        }).subscribe({
+          next: expiration => {
+            this.loginData.setLogin(expiration)
+            this.chat.connect().subscribe({
+              next: () => {
+                subscriber.next()
+              },
+              error: err => {
+                subscriber.error(err)
+              }
+            })
+          },
+          error: err => {
+            subscriber.error(err)
+          }
+        })
+      } catch (e) {
+        subscriber.error(e)
+      }
+    }).pipe(first())
+  }
+
   register(credentials: { email: string, nickname: string, password: string }) {
     return new Observable<string>(subscriber => {
       this.http.post(API + "register", credentials, {

@@ -1,11 +1,12 @@
-package com.example.demo.controller
+package com.example.demo.controllers
 
 import com.example.demo.entities.User
-import com.example.demo.jwt.JwtUtil
-import com.example.demo.models.AuthenticationRequest
-import com.example.demo.models.Credentials
-import com.example.demo.repository.UserRepository
-import com.example.demo.service.RealUserDetailsService
+import com.example.demo.auth.JwtUtil
+import com.example.demo.models.LoginDTO
+import com.example.demo.models.RegisterDTO
+import com.example.demo.models.GuestRequest
+import com.example.demo.repositories.UserRepository
+import com.example.demo.services.RealUserDetailsService
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.ResponseEntity
 import org.springframework.security.authentication.AuthenticationManager
@@ -26,14 +27,30 @@ class AuthController @Autowired constructor(
     private val passwordEncoder: PasswordEncoder
 ) {
     @PostMapping("/login")
-    fun login(@RequestBody authenticationRequest: AuthenticationRequest, res : HttpServletResponse): ResponseEntity<String> {
+    fun login(@RequestBody loginDTO: LoginDTO, res : HttpServletResponse): ResponseEntity<String> {
         try {
-            authenticationManager.authenticate(authenticationRequest.getToken())
+            authenticationManager.authenticate(loginDTO.getToken())
         } catch (e : BadCredentialsException){
-            return ResponseEntity.status(403).body("Bad credentials")
+            return ResponseEntity.status(403).body("Incorrect email address or password.")
         }
-        val userDetails = userDetailsService.loadUserByUsername(authenticationRequest.username)
-        val jwt = jwtUtil.generateToken(userDetails)
+        val userDetails = userDetailsService.loadUserByUsername(loginDTO.username)
+        val jwt = jwtUtil.generateToken(userDetails.username)
+        val cookie = Cookie("jwt", jwt.token)
+        cookie.path = "/"
+        //cookie.secure = true
+        cookie.isHttpOnly = true
+        res.addCookie(cookie)
+        return ResponseEntity.ok(jwt.expiration)
+    }
+
+    @PostMapping("/guest")
+    fun guest(@RequestBody guestRequest: GuestRequest, res :HttpServletResponse): ResponseEntity<String> {
+        try {
+            authenticationManager.authenticate(guestRequest.getToken())
+        } catch (e : BadCredentialsException){
+            return ResponseEntity.status(403).body("Nickname is taken.")
+        }
+        val jwt = jwtUtil.generateToken(guestRequest.nickname, "guest")
         val cookie = Cookie("jwt", jwt.token)
         cookie.path = "/"
         //cookie.secure = true
@@ -43,20 +60,20 @@ class AuthController @Autowired constructor(
     }
 
     @PostMapping("/register")
-    fun register(@RequestBody credentials: Credentials): ResponseEntity<String> {
+    fun register(@RequestBody registerDTO: RegisterDTO): ResponseEntity<String> {
         val errors = mutableListOf<String>()
-        userRepository.findByEmail(credentials.email)?.let {
+        userRepository.findByEmail(registerDTO.email)?.let {
             errors.add("Email is already being used")
         }
-        userRepository.findByNickname(credentials.nickname)?.let {
+        userRepository.findByNickname(registerDTO.nickname)?.let {
             errors.add("Nickname is already taken")
         }
         return if (errors.isEmpty()) {
             userRepository.saveAndFlush(
                 User(
-                    nickname = credentials.nickname,
-                    email = credentials.email,
-                    password = passwordEncoder.encode(credentials.password),
+                    nickname = registerDTO.nickname,
+                    email = registerDTO.email,
+                    password = passwordEncoder.encode(registerDTO.password),
                     roles = "USER"
                 )
             )

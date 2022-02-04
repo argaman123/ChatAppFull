@@ -1,7 +1,8 @@
 package com.example.demo.configs
 
-import com.example.demo.jwt.JwtAuthFilter
-import com.example.demo.service.RealUserDetailsService
+import com.example.demo.auth.GuestAuthenticationProvider
+import com.example.demo.auth.JwtAuthFilter
+import com.example.demo.services.RealUserDetailsService
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
@@ -40,7 +41,8 @@ class WebSecurityConfig @Autowired constructor(
     }
 
     override fun configure(auth: AuthenticationManagerBuilder) {
-        auth.authenticationProvider(authProvider())
+        auth.authenticationProvider(GuestAuthenticationProvider(realUserDetailsService))
+            .authenticationProvider(authProvider())
     }
 
     @Bean

@@ -1,20 +1,17 @@
 <div class="container darkMode">
   <mat-card class="form">
-    <mat-card-title>Login</mat-card-title>
+    <mat-card-title>Guest Login</mat-card-title>
     <mat-card-content>
       <form class="fields" [formGroup]="form" (ngSubmit)="onSubmit()">
         <mat-form-field>
-          <input type="email" matInput placeholder="Email" formControlName="username" email required>
-        </mat-form-field>
-        <mat-form-field>
-          <input type="password" matInput placeholder="Password" formControlName="password" required autocomplete="on">
+          <input type="text" matInput placeholder="Nickname" formControlName="nickname" required>
         </mat-form-field>
         <div *ngIf="error" class="error">
           {{ error }}
         </div>
         <div class="buttons">
           <a routerLink="/register" mat-stroked-button>Register</a>
-          <a routerLink="/guest" mat-stroked-button>Guest</a>
+          <a routerLink="/login" mat-stroked-button>User</a>
           <button type="submit" mat-raised-button color="primary">Login</button>
         </div>
       </form>

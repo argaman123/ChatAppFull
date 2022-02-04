@@ -1,7 +1,9 @@
-package com.example.demo.jwt
+package com.example.demo.auth
 
-import com.example.demo.service.RealUserDetailsService
+import com.example.demo.models.GuestUser
+import com.example.demo.services.RealUserDetailsService
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.security.authentication.AbstractAuthenticationToken
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken
 import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource
@@ -9,7 +11,6 @@ import org.springframework.security.web.util.matcher.AntPathRequestMatcher
 import org.springframework.stereotype.Component
 import org.springframework.web.filter.OncePerRequestFilter
 import javax.servlet.FilterChain
-import javax.servlet.ServletException
 import javax.servlet.http.HttpServletRequest
 import javax.servlet.http.HttpServletResponse
 
@@ -24,8 +25,7 @@ class JwtAuthFilter @Autowired constructor(
         const val tokenPrefix = "Bearer "
     }
 
-    private val skipFilterUrls: List<String> =
-        listOf("/auth/**")
+    private val skipFilterUrls: List<String> = listOf("/auth/**")
 
     override fun shouldNotFilter(request: HttpServletRequest): Boolean {
         return skipFilterUrls.stream().anyMatch { url: String ->
@@ -55,12 +55,21 @@ class JwtAuthFilter @Autowired constructor(
             }
         }
         token?.let {
-            val username = jwtUtil.extractAllClaims(it).subject
+            val claims = jwtUtil.extractAllClaims(it)
+            val username = claims.subject
+            val type = claims["type"]
             if (SecurityContextHolder.getContext().authentication == null) {
-                val userDetails = userDetailsService.loadUserByUsername(username)
-                val userAuthToken = UsernamePasswordAuthenticationToken(userDetails, null, userDetails.authorities)
-                userAuthToken.details = WebAuthenticationDetailsSource().buildDetails(request)
-                SecurityContextHolder.getContext().authentication = userAuthToken
+                var userAuthToken :AbstractAuthenticationToken? = null
+                if (type == "user") {
+                    val userDetails = userDetailsService.loadUserByUsername(username)
+                    userAuthToken = UsernamePasswordAuthenticationToken(userDetails, null, userDetails.authorities)
+                } else if (type == "guest") {
+                    userAuthToken = GuestAuthenticationToken(GuestUser(username))
+                }
+                userAuthToken?.let { authToken ->
+                    authToken.details = WebAuthenticationDetailsSource().buildDetails(request)
+                    SecurityContextHolder.getContext().authentication = authToken
+                }
             }
         }
         filterChain.doFilter(request, response)

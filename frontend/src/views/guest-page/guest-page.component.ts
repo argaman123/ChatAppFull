@@ -1,26 +1,20 @@
-import {Component, EventEmitter, Input, Output} from '@angular/core';
+import {Component, EventEmitter, OnInit, Output} from '@angular/core';
 import {FormControl, FormGroup, Validators} from "@angular/forms";
 import {AuthService} from "../../services/auth.service";
 import {Router} from "@angular/router";
 
 @Component({
-  selector: 'app-login-page',
-  templateUrl: './login-page.component.html',
-  styleUrls: ['./login-page.component.scss']
+  selector: 'app-guest-page',
+  templateUrl: './guest-page.component.html',
+  styleUrls: ['./guest-page.component.scss']
 })
-export class LoginPageComponent {
+export class GuestPageComponent{
 
   error: string | null = null
   @Output() submit = new EventEmitter()
   form: FormGroup = new FormGroup({
-    username: new FormControl('',[
+    nickname: new FormControl('',[
       Validators.required,
-      Validators.email
-    ]),
-    password: new FormControl('',[
-      Validators.required,
-      Validators.minLength(8),
-      Validators.maxLength(20),
     ]),
   });
 
@@ -29,7 +23,7 @@ export class LoginPageComponent {
 
   onSubmit() {
     if (this.form.valid) {
-      this.authService.login(this.form.value)
+      this.authService.guest(this.form.value)
         .subscribe({
           next: () => {
             this.router.navigateByUrl("/")

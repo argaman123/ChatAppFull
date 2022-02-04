@@ -1,4 +1,4 @@
-package com.example.demo.jwt
+package com.example.demo.auth
 
 import io.jsonwebtoken.Claims
 import io.jsonwebtoken.Jwts
@@ -32,18 +32,25 @@ class JwtUtil {
     }
 
     fun generateToken(userDetails: UserDetails): JWT {
-        val claims: Map<String, Any> = HashMap()
-        return createToken(claims, userDetails.username)
+        return generateToken(userDetails.username)
+    }
+
+    fun generateToken(username :String, type: String = "user"): JWT {
+        val claims: HashMap<String, Any> = HashMap()
+        claims["type"] = type
+        return createToken(claims, username)
     }
 
     private fun createToken(claims: Map<String, Any>, subject: String): JWT {
         val expiration = Date(System.currentTimeMillis() + TEN_HOURS)
+        println(expiration.toLocaleString())
         return JWT(Jwts.builder()
             .setClaims(claims)
             .setSubject(subject)
             .setIssuedAt(Date(System.currentTimeMillis()))
             .setExpiration(expiration)
-            .signWith(SignatureAlgorithm.HS256, SECRET_KEY).compact(), SimpleDateFormat("YYYY-MM-dd'T'hh:mm:ssZ").format(expiration))
+            .signWith(SignatureAlgorithm.HS256, SECRET_KEY).compact(),
+            SimpleDateFormat("YYYY-MM-dd'T'HH:mm:ssZ").format(expiration))
 
     }
 

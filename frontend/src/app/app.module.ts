@@ -27,6 +27,7 @@ import {MatMenuModule} from "@angular/material/menu";
 import {AuthInterceptor} from "../services/auth.interceptor";
 import {Router} from "@angular/router";
 import {LoginDataService} from "../services/login-data.service";
+import {GuestPageComponent} from "../views/guest-page/guest-page.component";
 
 @NgModule({
   declarations: [
@@ -37,7 +38,8 @@ import {LoginDataService} from "../services/login-data.service";
     MessageAreaComponent,
     MenuBarComponent,
     LoginPageComponent,
-    RegisterPageComponent
+    RegisterPageComponent,
+    GuestPageComponent
   ],
   imports: [
     BrowserModule,

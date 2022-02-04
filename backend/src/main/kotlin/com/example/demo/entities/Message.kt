@@ -1,6 +1,7 @@
 package com.example.demo.entities
 
 import com.example.demo.models.ChatMessage
+import com.example.demo.models.ChatUser
 import com.example.demo.models.RealUser
 import java.util.*
 import javax.persistence.*
@@ -15,5 +16,5 @@ data class Message(
     val datetime: Date = Date(),
     val content: String
 ){
-    constructor(chatMessage: ChatMessage, user: RealUser) :this(nickname = user.nickname, email = user.email, content = chatMessage.content, datetime = chatMessage.datetime)
+    constructor(chatMessage: ChatMessage, user: ChatUser) :this(nickname = user.getNickname(), email = user.getEmail(), content = chatMessage.content, datetime = chatMessage.datetime)
 }
