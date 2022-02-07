@@ -6,8 +6,8 @@ import javax.persistence.*
 @Table(name="users")
 data class User(
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY) val id :Long? = null,
-    @Column(unique = true, length = 20) val nickname: String = "",
+    @Column(unique = true, length = 20) var nickname: String = "",
     @Column(unique = true, length = 30) val email: String = "",
-    val password: String = "",
+    var password: String = "",
     val roles: String
 )

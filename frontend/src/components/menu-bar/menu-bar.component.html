@@ -4,11 +4,11 @@
       <mat-icon>more_vert</mat-icon>
     </button>
     <mat-menu #menu="matMenu">
-      <button mat-menu-item>Change password</button>
-      <button mat-menu-item>Change nickname</button>
+      <button *ngIf="isUser()" mat-menu-item (click)="onChangePassword()">Change password</button>
+      <button *ngIf="isUser()" mat-menu-item (click)="onChangeNickname()">Change nickname</button>
       <button mat-menu-item (click)="onSignOut()">Sign out</button>
     </mat-menu>
     <span class="spacer"></span>
-    <a mat-flat-button>{{subscribed ? "Cancel" : "Buy one month of"}} subscription</a>
+    <a *ngIf="isUser()" mat-flat-button>{{subscribed ? "Cancel" : "Buy one month of"}} subscription</a>
   </mat-toolbar-row>
 </mat-toolbar>

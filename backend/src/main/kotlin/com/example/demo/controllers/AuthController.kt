@@ -27,10 +27,10 @@ class AuthController @Autowired constructor(
     private val passwordEncoder: PasswordEncoder
 ) {
     @PostMapping("/login")
-    fun login(@RequestBody loginDTO: LoginDTO, res : HttpServletResponse): ResponseEntity<String> {
+    fun login(@RequestBody loginDTO: LoginDTO, res: HttpServletResponse): ResponseEntity<String> {
         try {
             authenticationManager.authenticate(loginDTO.getToken())
-        } catch (e : BadCredentialsException){
+        } catch (e: BadCredentialsException) {
             return ResponseEntity.status(403).body("Incorrect email address or password.")
         }
         val userDetails = userDetailsService.loadUserByUsername(loginDTO.username)
@@ -44,10 +44,10 @@ class AuthController @Autowired constructor(
     }
 
     @PostMapping("/guest")
-    fun guest(@RequestBody guestRequest: GuestRequest, res :HttpServletResponse): ResponseEntity<String> {
+    fun guest(@RequestBody guestRequest: GuestRequest, res: HttpServletResponse): ResponseEntity<String> {
         try {
             authenticationManager.authenticate(guestRequest.getToken())
-        } catch (e : BadCredentialsException){
+        } catch (e: BadCredentialsException) {
             return ResponseEntity.status(403).body("Nickname is taken.")
         }
         val jwt = jwtUtil.generateToken(guestRequest.nickname, "guest")

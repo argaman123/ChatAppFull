@@ -8,7 +8,7 @@ import {Message} from "stompjs";
 import {Router} from "@angular/router";
 import {LoginDataService} from "./login-data.service";
 
-const API = "http://localhost:8080/"
+const API = "http://localhost:8080/chat/"
 
 @Injectable({
   providedIn: 'root'
@@ -27,7 +27,7 @@ export class ChatService {
         return
       }
       try {
-        let ws = new SockJS(API + "chat-connection");
+        let ws = new SockJS(API + "connect");
         this.stompClient = Stomp.over(ws);
         this.stompClient.connect({}, () => {
           this._handleNewMessage()
@@ -70,7 +70,7 @@ export class ChatService {
   }
 
   getMessageHistory() {
-    return this.http.get<ChatMessage[]>(API + "chat-history", {
+    return this.http.get<ChatMessage[]>(API + "history", {
       withCredentials: true,
     }).pipe(map(messages => {
       for (const message of messages)

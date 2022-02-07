@@ -17,15 +17,16 @@ export class AuthService {
   constructor(private http: HttpClient, private chat: ChatService, private loginData: LoginDataService) {
   }
 
-  login(credentials: { username: string, password: string }) {
+  private _loginLogic(type :string, credentials :any){
     return new Observable(subscriber => {
       try {
-        this.http.post(API + "login", credentials, {
+        this.http.post(API + (type == "user" ? "login" : type), credentials, {
           responseType: 'text',
           withCredentials: true
         }).subscribe({
           next: expiration => {
             this.loginData.setLogin(expiration)
+            this.loginData.setUserType(type)
             this.chat.connect().subscribe({
               next: () => {
                 subscriber.next()
@@ -45,32 +46,12 @@ export class AuthService {
     }).pipe(first())
   }
 
+  login(credentials: { username: string, password: string }) {
+    return this._loginLogic("user", credentials)
+  }
+
   guest(credentials : { nickname :string }){
-    return new Observable(subscriber => {
-      try {
-        this.http.post(API + "guest", credentials, {
-          responseType: 'text',
-          withCredentials: true
-        }).subscribe({
-          next: expiration => {
-            this.loginData.setLogin(expiration)
-            this.chat.connect().subscribe({
-              next: () => {
-                subscriber.next()
-              },
-              error: err => {
-                subscriber.error(err)
-              }
-            })
-          },
-          error: err => {
-            subscriber.error(err)
-          }
-        })
-      } catch (e) {
-        subscriber.error(e)
-      }
-    }).pipe(first())
+    return this._loginLogic("guest", credentials)
   }
 
   register(credentials: { email: string, nickname: string, password: string }) {
@@ -90,23 +71,4 @@ export class AuthService {
     }).pipe(first())
   }
 
-  logout() {
-    return new Observable(subscriber => {
-      this.http.get(API + "logout", {
-        withCredentials: true
-      }).subscribe({
-          next: () => {
-            this.loginData.immediateLogout()
-            this.chat.disconnect(()=>{
-              subscriber.next()
-            })
-          },
-          error: err => {
-            console.log(err)
-            subscriber.error(err)
-          }
-        }
-      )
-    })
-  }
 }

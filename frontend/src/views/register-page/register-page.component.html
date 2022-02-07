@@ -12,7 +12,10 @@
         <mat-form-field>
           <input type="text" matInput placeholder="Nickname" formControlName="nickname" required>
           <mat-error *ngIf="form.get('nickname')?.errors?.['maxlength']">
-            Nicknames must be shorter than 20 letters.
+            Nicknames must be shorter than 10 letters.
+          </mat-error>
+          <mat-error *ngIf="form.get('nickname')?.errors?.['pattern']">
+            Nicknames must contain at least one letter, and only English letters are allowed
           </mat-error>
         </mat-form-field>
         <mat-form-field>

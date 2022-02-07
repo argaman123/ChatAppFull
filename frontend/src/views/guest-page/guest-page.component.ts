@@ -15,6 +15,9 @@ export class GuestPageComponent{
   form: FormGroup = new FormGroup({
     nickname: new FormControl('',[
       Validators.required,
+      Validators.maxLength(10),
+      Validators.pattern(/[a-zA-Z]/),
+      Validators.pattern(/^[\x00-\x7F]+$/) // ?
     ]),
   });
 

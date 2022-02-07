@@ -20,7 +20,9 @@ export class RegisterPageComponent {
     ]),
     nickname: new FormControl('', [
       Validators.required,
-      Validators.maxLength(20)
+      Validators.maxLength(10),
+      Validators.pattern(/[a-zA-Z]/),
+      Validators.pattern(/^[\x00-\x7F]+$/) // ?
     ]),
     password: new FormControl('', [
       Validators.required,

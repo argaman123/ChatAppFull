@@ -28,6 +28,11 @@ import {AuthInterceptor} from "../services/auth.interceptor";
 import {Router} from "@angular/router";
 import {LoginDataService} from "../services/login-data.service";
 import {GuestPageComponent} from "../views/guest-page/guest-page.component";
+import {AccountService} from "../services/account.service";
+import {ChangeNicknameComponent} from "../modals/change-nickname/change-nickname.component";
+import {MatDialogModule} from "@angular/material/dialog";
+import {MatSnackBarModule} from "@angular/material/snack-bar";
+import {ChangePasswordComponent} from "../modals/change-password/change-password.component";
 
 @NgModule({
   declarations: [
@@ -39,7 +44,9 @@ import {GuestPageComponent} from "../views/guest-page/guest-page.component";
     MenuBarComponent,
     LoginPageComponent,
     RegisterPageComponent,
-    GuestPageComponent
+    GuestPageComponent,
+    ChangeNicknameComponent,
+    ChangePasswordComponent
   ],
   imports: [
     BrowserModule,
@@ -54,9 +61,11 @@ import {GuestPageComponent} from "../views/guest-page/guest-page.component";
     ReactiveFormsModule,
     MatButtonModule,
     MatToolbarModule,
-    MatMenuModule
+    MatMenuModule,
+    MatDialogModule,
+    MatSnackBarModule
   ],
-  providers: [WebsocketService, AuthGuard, AuthService, ChatService, LoginDataService, {
+  providers: [WebsocketService, AuthGuard, AuthService, ChatService, LoginDataService, AccountService, {
     provide: HTTP_INTERCEPTORS,
     useFactory: function(loginData: LoginDataService) {
       return new AuthInterceptor(loginData);

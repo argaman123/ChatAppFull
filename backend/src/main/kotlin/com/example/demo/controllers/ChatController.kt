@@ -17,10 +17,10 @@ import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.RestController
 
 @RestController
-class MessageController @Autowired constructor(
+class ChatController @Autowired constructor(
     private val messageRepository: MessageRepository,
 ) {
-    @GetMapping("/chat-history")
+    @GetMapping("/chat/history")
     fun chatInit() : ResponseEntity<List<ChatMessage>> {
         return ResponseEntity.ok(messageRepository.findAll().map { ChatMessage(it) })
     }

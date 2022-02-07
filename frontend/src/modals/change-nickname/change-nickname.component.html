@@ -1,0 +1,18 @@
+<h1 mat-dialog-title>Change nickname</h1>
+<div mat-dialog-content class="content mat-typography" [formGroup]="form">
+  <p>Which nickname do you want to have from now on?</p>
+  <mat-form-field appearance="fill">
+    <mat-label>Nickname</mat-label>
+    <input type="text" matInput required formControlName="nickname">
+    <mat-error *ngIf="form.get('nickname')?.errors?.['maxlength']">
+      Nicknames must be shorter than 10 letters.
+    </mat-error>
+    <mat-error *ngIf="form.get('nickname')?.errors?.['pattern']">
+      Nicknames must contain at least one letter, and only English letters are allowed
+    </mat-error>
+  </mat-form-field>
+</div>
+<div class="buttons" mat-dialog-actions>
+  <button mat-stroked-button (click)="onCancel()">Cancel</button>
+  <button mat-raised-button color="primary" (click)="onOk()">Ok</button>
+</div>

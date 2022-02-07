@@ -23,7 +23,7 @@ class WebSocketConfig @Autowired constructor(
 
     override fun registerStompEndpoints(registry: StompEndpointRegistry) {
         registry
-            .addEndpoint("/chat-connection")
+            .addEndpoint("/chat/connect")
             .setAllowedOrigins("http://localhost:4200")
             .withSockJS()
     }

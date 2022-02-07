@@ -1,5 +1,6 @@
 import {Injectable} from "@angular/core";
 import {Router} from "@angular/router";
+import {first, Observable} from "rxjs";
 
 @Injectable({
   providedIn: 'root'
@@ -24,11 +25,29 @@ export class LoginDataService {
     return new Date(expiration) > new Date()
   }
 
+
+  setUserType(type :string){
+    localStorage.setItem("type", type)
+  }
+
+  clearUserType(){
+    localStorage.removeItem("type")
+  }
+
+  isUser(){
+    return localStorage.getItem("type") == "user"
+  }
+
+  logout(){
+    this.clearLogin()
+    this.clearUserType()
+  }
+
   // One implementation for any time you need to immediately log out (used in authInterceptor for instance)
   immediateLogout(){
     const url = this.router.routerState.snapshot.url
     if (!url.endsWith("/login") && !url.endsWith("/register") && !url.endsWith("guest")) {
-      this.clearLogin()
+      this.logout()
       this.router.navigateByUrl("/login")
       return true
     }

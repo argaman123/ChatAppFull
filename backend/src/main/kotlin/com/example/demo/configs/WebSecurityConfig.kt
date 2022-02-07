@@ -36,7 +36,7 @@ class WebSecurityConfig @Autowired constructor(
             .and().sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
             .and()
                 // TODO: AUTH DONE IS A TEMPORARY SOLUTION AND SHOULD BE CHANGED LATER
-            .logout().logoutUrl("/auth/logout").logoutSuccessUrl("/auth/done").deleteCookies("jwt").invalidateHttpSession(true)
+            .logout().logoutUrl("/account/logout").logoutSuccessUrl("/auth/done").deleteCookies("jwt").invalidateHttpSession(true)
         http.addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter::class.java)
     }
 

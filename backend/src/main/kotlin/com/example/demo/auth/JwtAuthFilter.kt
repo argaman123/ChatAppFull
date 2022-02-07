@@ -56,12 +56,12 @@ class JwtAuthFilter @Autowired constructor(
         }
         token?.let {
             val claims = jwtUtil.extractAllClaims(it)
-            val username = claims.subject
+            val username = claims.subject // mail for users, nickname for guests
             val type = claims["type"]
             if (SecurityContextHolder.getContext().authentication == null) {
                 var userAuthToken :AbstractAuthenticationToken? = null
                 if (type == "user") {
-                    val userDetails = userDetailsService.loadUserByUsername(username)
+                    val userDetails = userDetailsService.loadUserByUsername(username) // change to id maybe?
                     userAuthToken = UsernamePasswordAuthenticationToken(userDetails, null, userDetails.authorities)
                 } else if (type == "guest") {
                     userAuthToken = GuestAuthenticationToken(GuestUser(username))

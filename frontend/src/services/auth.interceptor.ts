@@ -19,7 +19,8 @@ export class AuthInterceptor implements HttpInterceptor {
   constructor(private loginData: LoginDataService) { }
 
   private handleAuthError(err: HttpErrorResponse): Observable<any> {
-    if ((err.status === 401 || err.status === 403) && this.loginData.immediateLogout()) {
+    // TODO : make it more abstract
+    if ((err.status === 401 || err.status === 403) && err.url?.includes("/chat/connect") && this.loginData.immediateLogout()) {
       return of(err.message); // not sure
     }
     return throwError(() => err);
