@@ -5,14 +5,11 @@ import {Component, Input, OnInit} from '@angular/core';
   templateUrl: './user-list.component.html',
   styleUrls: ['./user-list.component.scss']
 })
-export class UserListComponent implements OnInit {
+export class UserListComponent {
 
-  @Input() users!: User[]
-  @Input() title! :string
+  @Input() users!: string[]
+  @Input() title!: string
 
   constructor() { }
-
-  ngOnInit(): void {
-  }
 
 }

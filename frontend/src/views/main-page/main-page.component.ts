@@ -1,4 +1,4 @@
-import {Component, OnInit} from '@angular/core';
+import {Component, OnInit, Pipe, PipeTransform} from '@angular/core';
 import {ChatService} from "../../services/chat.service";
 import {BehaviorSubject, Subject} from "rxjs";
 
@@ -8,12 +8,16 @@ import {BehaviorSubject, Subject} from "rxjs";
   styleUrls: ['./main-page.component.scss']
 })
 export class MainPageComponent implements OnInit {
-  activeUsers: User[] = [{nickname: "danny"}, {nickname: "bobby"}]
+  activeUsers: { [email: string]: string } = {}
   registered: boolean = true
   messageHistory: ChatMessage[] = []
   notifyScroll = new Subject()
 
   constructor(private chat: ChatService) {
+  }
+
+  getNicknames(){
+    return Object.values(this.activeUsers).sort()
   }
 
   ngOnInit(): void {
@@ -26,8 +30,14 @@ export class MainPageComponent implements OnInit {
         this.messageHistory.push(message)
         this.notifyScroll.next(null)
       })
-      this.chat.getUsers().subscribe(text => {
-        console.log(text)
+      this.chat.getUsers().subscribe(allNicknames => {
+        this.activeUsers = allNicknames as { [email: string]: string }
+      })
+      this.chat.getUserConnectionEvent().subscribe(event => {
+        if (event.type == "connected")
+          this.activeUsers[event.email] = event.nickname
+        else if (event.type == "disconnected")
+          delete this.activeUsers[event.email]
       })
     })
   }

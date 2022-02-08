@@ -1,5 +1,7 @@
-interface User {
-  nickname: string
+interface UserConnectionEvent {
+  email :string,
+  nickname: string,
+  type :string
 }
 
 interface ChatMessage {

@@ -11,13 +11,16 @@
     .chat-container {
       display: flex;
       flex-direction: column;
-      width: 80%;
+      width: 100%;
       .messages {
         background: #17181a;
       }
       .message-area {
         background: #17181a;
       }
+    }
+    .users {
+      width: 200px;
     }
   }
 }
