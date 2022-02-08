@@ -6,6 +6,7 @@ import com.example.demo.models.LoginDTO
 import com.example.demo.models.RegisterDTO
 import com.example.demo.models.GuestRequest
 import com.example.demo.repositories.UserRepository
+import com.example.demo.services.ActiveUsersManager
 import com.example.demo.services.RealUserDetailsService
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.ResponseEntity

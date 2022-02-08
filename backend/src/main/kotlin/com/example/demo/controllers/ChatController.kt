@@ -5,13 +5,12 @@ import com.example.demo.entities.Message
 import com.example.demo.models.ChatMessage
 import com.example.demo.models.ChatUser
 import com.example.demo.models.MessageDTO
-import com.example.demo.models.RealUser
 import com.example.demo.repositories.MessageRepository
+import com.example.demo.services.ActiveUsersManager
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.ResponseEntity
 import org.springframework.messaging.handler.annotation.MessageMapping
 import org.springframework.messaging.handler.annotation.SendTo
-import org.springframework.messaging.simp.annotation.SubscribeMapping
 import org.springframework.security.core.Authentication
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.RestController
@@ -19,10 +18,16 @@ import org.springframework.web.bind.annotation.RestController
 @RestController
 class ChatController @Autowired constructor(
     private val messageRepository: MessageRepository,
+    private val activeUsersManager: ActiveUsersManager
 ) {
     @GetMapping("/chat/history")
     fun chatInit() : ResponseEntity<List<ChatMessage>> {
         return ResponseEntity.ok(messageRepository.findAll().map { ChatMessage(it) })
+    }
+
+    @GetMapping("/chat/users")
+    fun usersInit() : ResponseEntity<Map<String, String>> {
+        return ResponseEntity.ok(activeUsersManager.nicknames)
     }
 
     @MessageMapping("/send")
@@ -34,12 +39,12 @@ class ChatController @Autowired constructor(
         return chatMessage
     }
 
-    @SubscribeMapping("/topic/users")
-    @SendTo("/topic/users")
-    fun test() :String {
-        println("hello")
-        return "hello"
-    }
+
+
+    /*@GetMapping("/users", produces = [MediaType.TEXT_EVENT_STREAM_VALUE])
+    fun getUsers() :SseEmitter {
+        return activeUsersService.newEmitter()
+    }*/
 }
 /*
 

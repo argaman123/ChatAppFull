@@ -76,20 +76,27 @@ export class ChatService {
       for (const message of messages)
         message.datetime = new Date(message.datetime)
       return messages
-    }))
+    }), first())
   }
 
-  private _onNewUser = new Subject<String>()
+  private _onNewUser = new Subject<UserConnectionEvent>()
 
   private _handleNewUser() {
-    this.stompClient?.subscribe("/topic/users", () => {
-      this._onNewUser.next("hi")
+    this.stompClient?.subscribe("/topic/users", event => {
+      this._onNewUser.next(JSON.parse(event.body))
     })
   }
 
-  getUsers() {
+  getUserConnectionEvent() {
     return this._onNewUser.asObservable()
   }
+
+  getUsers() {
+    return this.http.get(API + "users", {
+      withCredentials: true,
+    }).pipe(first())
+  }
+
 
   sendMessage(content: string) {
     console.log(this.stompClient)

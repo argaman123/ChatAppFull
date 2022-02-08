@@ -2,8 +2,9 @@ package com.example.demo.configs
 
 import com.example.demo.unused.AuthChannelInterceptorAdapter
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
-import org.springframework.messaging.simp.config.ChannelRegistration
+import org.springframework.messaging.simp.SimpMessagingTemplate
 import org.springframework.messaging.simp.config.MessageBrokerRegistry
 import org.springframework.web.socket.config.annotation.EnableWebSocketMessageBroker
 import org.springframework.web.socket.config.annotation.StompEndpointRegistry
@@ -27,6 +28,7 @@ class WebSocketConfig @Autowired constructor(
             .setAllowedOrigins("http://localhost:4200")
             .withSockJS()
     }
+
 
 
 /*    override fun configureClientInboundChannel(registration: ChannelRegistration) {

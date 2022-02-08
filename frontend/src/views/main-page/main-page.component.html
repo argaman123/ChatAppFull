@@ -5,6 +5,6 @@
       <app-messages class="messages" [messages]="messageHistory"></app-messages>
       <app-message-area (send)="print($event)" class="message-area"></app-message-area>
     </div>
-    <app-user-list class="users" [users]="activeUsers" title="Online"></app-user-list>
+    <app-user-list class="users" [users]="getNicknames()" title="Online"></app-user-list>
   </div>
 </div>
