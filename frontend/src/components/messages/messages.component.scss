@@ -16,6 +16,9 @@
     background: #00000050;
   }
   .message {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
     width: max-content;
     font-family: "Roboto Light", serif;
     margin: 10px 0;
@@ -31,9 +34,8 @@
       }
       background: #3d3d42;
       .time {
-        transition: max-height 0.2s, opacity 0.2s, padding-top 0.2s;
-        padding-top: 5px;
-        max-height: unset;
+        padding-left: 5px;
+        display: unset;
         opacity: 1;
       }
     }
@@ -41,19 +43,15 @@
     &:hover {
       background: #36363b;
     }
-
+    .time {
+      opacity: 0;
+      display: none;
+    }
     .content {
       font-family: "Roboto", serif;
       font-size: 25px;
       color: #eeeeee;
       padding-left: 8px;
-    }
-
-    .time {
-      max-height: 0;
-      opacity: 0;
-      font-size: 17px;
-      text-align: right;
     }
   }
 }
