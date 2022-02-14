@@ -22,40 +22,34 @@ import java.util.concurrent.ConcurrentLinkedQueue
 @Component
 class ActiveUsersManager @Autowired constructor(
     private val messagingTemplate: SimpMessagingTemplate,
-    private val userRepository: UserRepository
-) {
+    private val messagesCountManager: MessagesCountManager
+    ) {
     val nicknames: ConcurrentHashMap<String, String> = ConcurrentHashMap()
-
-    private fun getNickname(email :String): String {
-        return email.let { userRepository.findByEmail(it)?.nickname }!!
-    }
-
-    private fun getEmail(event: AbstractSubProtocolEvent) :String?{
-        return SimpMessageHeaderAccessor.wrap(event.message).user?.name
-    }
 
     private fun sendEvent(event :UserConnectionEvent){
         messagingTemplate.convertAndSend("/topic/users", event)
     }
 
-    private fun handleSessionEvent(event :AbstractSubProtocolEvent, type :String) :List<String>{
+    private fun handleSessionEvent(event :AbstractSubProtocolEvent, type :String) :List<Any>{
         val user = ((event.user as AbstractAuthenticationToken).principal as ChatUser)
         val nickname = user.getNickname()
         val id = user.getEmail() ?: nickname
         sendEvent(UserConnectionEvent(id, nickname, type))
-        return listOf(id, nickname)
+        return listOf(id, nickname, user)
     }
 
     @EventListener
     private fun handleSessionConnected(event: SessionConnectEvent){
         val details = handleSessionEvent(event, "connected")
-        nicknames[details[0]] = details[1]
+        nicknames[details[0] as String] = details[1] as String
+        messagesCountManager.addUser(details[2] as ChatUser)
     }
 
     @EventListener
     private fun handleSessionDisconnected(event: SessionDisconnectEvent){
         val details = handleSessionEvent(event, "disconnected")
         nicknames.remove(details[0])
+        messagesCountManager.removeUser(details[2] as ChatUser)
     }
 
 }

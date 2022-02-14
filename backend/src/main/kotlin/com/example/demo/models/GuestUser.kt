@@ -15,4 +15,6 @@ class GuestUser(nickname: String) : SpringUser(
 ), ChatUser {
     override fun getNickname(): String = username
     override fun getEmail(): String? = null
+    override fun isPremium(): Boolean = false
+    override fun getType(): String = "Guest"
 }

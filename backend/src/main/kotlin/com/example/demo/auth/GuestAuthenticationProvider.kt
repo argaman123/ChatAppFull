@@ -1,6 +1,7 @@
 package com.example.demo.auth
 
 import com.example.demo.models.GuestUser
+import com.example.demo.services.ActiveUsersManager
 import com.example.demo.services.RealUserDetailsService
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.security.authentication.AuthenticationProvider
@@ -11,13 +12,17 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException
 import org.springframework.stereotype.Component
 
 @Component
-class GuestAuthenticationProvider(private val realUserDetailsService: RealUserDetailsService): AuthenticationProvider {
+class GuestAuthenticationProvider(
+    private val realUserDetailsService: RealUserDetailsService,
+    private val activeUsersManager: ActiveUsersManager
+    ): AuthenticationProvider {
 
     override fun authenticate(auth: Authentication): Authentication? {
         try {
             realUserDetailsService.loadUserByNickname(auth.name)
         } catch (e: UsernameNotFoundException){
-            return GuestAuthenticationToken(GuestUser(auth.name))
+            if (!activeUsersManager.nicknames.values.contains(auth.name))
+                return GuestAuthenticationToken(GuestUser(auth.name))
         }
         throw BadCredentialsException("Nickname is taken")
     }

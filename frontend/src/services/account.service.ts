@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import {Observable} from "rxjs";
+import {BehaviorSubject, map, Observable, Subject} from "rxjs";
 import {HttpClient} from "@angular/common/http";
 import {ChatService} from "./chat.service";
 import {LoginDataService} from "./login-data.service";
@@ -25,6 +25,27 @@ export class AccountService {
       withCredentials: true,
       responseType: "text"
     })
+  }
+
+  private _premiumPlan = new BehaviorSubject<PremiumStatus>({plan: 'none'})
+
+  isPremium(){
+    this.http.get<PremiumStatus>(API + "premium", {
+      withCredentials: true
+    }).subscribe(plan => {
+      plan.expiration = plan.expiration == null ? undefined : new Date(plan.expiration)
+      this._premiumPlan.next(plan)
+    })
+    return this._premiumPlan.asObservable()
+  }
+
+  changePlan(plan :string){
+    return this.http.put<PremiumStatus>(API + "premium", plan, {
+      withCredentials: true
+    }).pipe(map(newPlan => {
+      newPlan.expiration = newPlan.expiration == null ? undefined : new Date(newPlan.expiration)
+      this._premiumPlan.next(newPlan)
+    }))
   }
 
   logout() {

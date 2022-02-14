@@ -2,6 +2,7 @@ package com.example.demo.configs
 
 import com.example.demo.auth.GuestAuthenticationProvider
 import com.example.demo.auth.JwtAuthFilter
+import com.example.demo.services.ActiveUsersManager
 import com.example.demo.services.RealUserDetailsService
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.context.annotation.Bean
@@ -24,8 +25,9 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource
 @Configuration
 @EnableWebSecurity
 class WebSecurityConfig @Autowired constructor(
-    val realUserDetailsService: RealUserDetailsService,
-    val jwtAuthFilter: JwtAuthFilter
+    private val realUserDetailsService: RealUserDetailsService,
+    private val jwtAuthFilter: JwtAuthFilter,
+    private val activeUsersManager: ActiveUsersManager
 ) : WebSecurityConfigurerAdapter() {
     override fun configure(http: HttpSecurity) {
         http.cors()
@@ -41,7 +43,7 @@ class WebSecurityConfig @Autowired constructor(
     }
 
     override fun configure(auth: AuthenticationManagerBuilder) {
-        auth.authenticationProvider(GuestAuthenticationProvider(realUserDetailsService))
+        auth.authenticationProvider(GuestAuthenticationProvider(realUserDetailsService, activeUsersManager))
             .authenticationProvider(authProvider())
     }
 

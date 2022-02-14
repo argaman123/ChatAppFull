@@ -14,10 +14,13 @@ import {ChangePasswordComponent} from "../../modals/change-password/change-passw
   styleUrls: ['./menu-bar.component.scss']
 })
 export class MenuBarComponent {
-  @Input() subscribed: boolean = false
+  @Input() premium!: PremiumStatus
 
   constructor(private accountService: AccountService,
-              private loginData: LoginDataService, public dialog: MatDialog) {
+              private loginData: LoginDataService,
+              public dialog: MatDialog,
+              private snackBar: MatSnackBar) {
+
   }//) { }
 
   isUser() {
@@ -25,15 +28,25 @@ export class MenuBarComponent {
   }
 
   onSignOut() {
-    this.accountService.logout().subscribe(() => {})
+    this.accountService.logout().subscribe(() => {
+    })
   }
 
   onChangeNickname() {
     this.dialog.open(ChangeNicknameComponent)
   }
 
-  onChangePassword(){
+  onChangePassword() {
     this.dialog.open(ChangePasswordComponent)
+  }
+
+  onPlan(plan: string) {
+    this.accountService.changePlan(plan).subscribe(() => {
+      console.log(plan)
+      // Reloading the page will allow the backend to refresh ChatUser premium plan
+      // TODO: Fix (?) Exploit: Opening the chat in multiple windows will allow you to still have the current plan perks
+      window.location.reload()
+    })
   }
 
 }

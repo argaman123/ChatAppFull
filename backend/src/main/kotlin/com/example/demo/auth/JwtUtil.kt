@@ -27,14 +27,6 @@ class JwtUtil {
         return Jwts.parser().setSigningKey(SECRET_KEY).parseClaimsJws(token).body
     }
 
-    fun isTokenExpired(token: String): Boolean {
-        return extractAllClaims(token).expiration.before(Date())
-    }
-
-    fun generateToken(userDetails: UserDetails): JWT {
-        return generateToken(userDetails.username)
-    }
-
     fun generateToken(username :String, type: String = "user"): JWT {
         val claims: HashMap<String, Any> = HashMap()
         claims["type"] = type

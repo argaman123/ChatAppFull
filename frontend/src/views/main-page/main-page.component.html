@@ -1,5 +1,5 @@
 <div class="container">
-  <app-menu-bar *ngIf="registered" class="menu-container">Top bar</app-menu-bar>
+  <app-menu-bar *ngIf="registered" class="menu-container" [premium]="premium">Top bar</app-menu-bar>
   <div class="main-container">
     <div class="chat-container">
       <app-messages class="messages" [messages]="messageHistory"></app-messages>

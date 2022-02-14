@@ -15,6 +15,11 @@ import javax.servlet.http.HttpServletRequest
 import javax.servlet.http.HttpServletResponse
 
 
+
+/*
+Seems like Sessions would be a better solution for this type of project, since we already keep track of connected users,
+but since I wanted to experience with different types of web securities and this one worked first, I kept it.
+ */
 @Component
 class JwtAuthFilter @Autowired constructor(
     val jwtUtil: JwtUtil,

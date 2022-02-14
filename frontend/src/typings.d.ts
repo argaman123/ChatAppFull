@@ -4,6 +4,11 @@ interface UserConnectionEvent {
   type :string
 }
 
+interface PremiumStatus {
+  expiration?: Date,
+  plan: string
+}
+
 interface ChatMessage {
   from :string
   datetime :Date

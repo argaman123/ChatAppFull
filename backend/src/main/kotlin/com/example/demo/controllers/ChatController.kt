@@ -7,10 +7,12 @@ import com.example.demo.models.ChatUser
 import com.example.demo.models.MessageDTO
 import com.example.demo.repositories.MessageRepository
 import com.example.demo.services.ActiveUsersManager
+import com.example.demo.services.MessagesCountManager
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.ResponseEntity
 import org.springframework.messaging.handler.annotation.MessageMapping
 import org.springframework.messaging.handler.annotation.SendTo
+import org.springframework.messaging.simp.SimpMessagingTemplate
 import org.springframework.security.core.Authentication
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.RestController
@@ -18,7 +20,9 @@ import org.springframework.web.bind.annotation.RestController
 @RestController
 class ChatController @Autowired constructor(
     private val messageRepository: MessageRepository,
-    private val activeUsersManager: ActiveUsersManager
+    private val activeUsersManager: ActiveUsersManager,
+    private val messagesCountManager: MessagesCountManager,
+    private val messagingTemplate: SimpMessagingTemplate
 ) {
     @GetMapping("/chat/history")
     fun chatInit() : ResponseEntity<List<ChatMessage>> {
@@ -31,12 +35,17 @@ class ChatController @Autowired constructor(
     }
 
     @MessageMapping("/send")
-    @SendTo("/topic/chat")
-    fun add(auth: Authentication, message: MessageDTO): ChatMessage {
+    fun send(auth: Authentication, message: MessageDTO) :ResponseEntity<String>{
+        // TODO: Somehow return a ResponseEntity
         val user =  auth.principal as ChatUser
+        if (!user.isPremium() && messagesCountManager.getCount(user) >= 5){ // TODO: change to 100
+            return ResponseEntity.status(403).body("Reached the massage limit for free users (100)")
+        }
+        messagesCountManager.increaseCounter(user)
         val chatMessage = ChatMessage(user.getNickname(), message.content)
         messageRepository.saveAndFlush(Message(chatMessage, user))
-        return chatMessage
+        messagingTemplate.convertAndSend("/topic/chat", chatMessage)
+        return ResponseEntity.ok("Message was sent successfully")
     }
 
 

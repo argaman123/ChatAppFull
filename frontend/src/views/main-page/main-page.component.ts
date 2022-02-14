@@ -1,6 +1,7 @@
 import {Component, OnInit, Pipe, PipeTransform} from '@angular/core';
 import {ChatService} from "../../services/chat.service";
 import {BehaviorSubject, Subject} from "rxjs";
+import {AccountService} from "../../services/account.service";
 
 @Component({
   selector: 'app-main-page',
@@ -12,9 +13,8 @@ export class MainPageComponent implements OnInit {
   registered: boolean = true
   messageHistory: ChatMessage[] = []
   notifyScroll = new Subject()
-
-  constructor(private chat: ChatService) {
-  }
+  premium: PremiumStatus = {plan: "none"}
+  constructor(private chat: ChatService, private account: AccountService) {}
 
   getNicknames(){
     return Object.values(this.activeUsers).sort()
@@ -38,6 +38,9 @@ export class MainPageComponent implements OnInit {
           this.activeUsers[event.email] = event.nickname
         else if (event.type == "disconnected")
           delete this.activeUsers[event.email]
+      })
+      this.account.isPremium().subscribe(plan => {
+        this.premium = plan
       })
     })
   }

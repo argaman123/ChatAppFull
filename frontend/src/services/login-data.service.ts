@@ -9,12 +9,11 @@ export class LoginDataService {
   constructor(private router: Router) {
   }
 
-  setLogin(expiration :string){
-    localStorage.setItem("expiration", expiration)
-  }
-
-  clearLogin(){
-    localStorage.removeItem("expiration")
+  setLogin(expiration :string | null = null){
+    if (expiration == null)
+      localStorage.removeItem("expiration")
+    else
+      localStorage.setItem("expiration", expiration)
   }
 
   isLoggedIn(){
@@ -24,14 +23,12 @@ export class LoginDataService {
     console.log(new Date().toLocaleString())
     return new Date(expiration) > new Date()
   }
-
-
-  setUserType(type :string){
-    localStorage.setItem("type", type)
-  }
-
-  clearUserType(){
-    localStorage.removeItem("type")
+  
+  setUserType(type :string | null = null){
+    if (type == null)
+      localStorage.removeItem("type")
+    else
+      localStorage.setItem("type", type)
   }
 
   isUser(){
@@ -39,8 +36,8 @@ export class LoginDataService {
   }
 
   logout(){
-    this.clearLogin()
-    this.clearUserType()
+    this.setLogin()
+    this.setUserType()
   }
 
   // One implementation for any time you need to immediately log out (used in authInterceptor for instance)

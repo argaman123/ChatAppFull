@@ -1,7 +1,22 @@
 .spacer {
   flex: 1 1 auto;
 }
-
+.account-type {
+  height: 27px;
+  border-radius: 5px;
+  font-size: 15px;
+  font-weight: bold;
+  line-height: 27px;
+  text-align: center;
+  margin-right: 0;
+  transform: translateX(5px);
+  padding: 5px 15px;
+  background: rgba(89, 89, 89, 0.55);
+  &:not(.none){
+    background: #ffbd34;
+    color: black;
+  }
+}
 
 /*
 
