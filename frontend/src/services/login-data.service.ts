@@ -1,12 +1,19 @@
 import {Injectable} from "@angular/core";
 import {Router} from "@angular/router";
-import {first, Observable} from "rxjs";
 
 @Injectable({
   providedIn: 'root'
 })
 export class LoginDataService {
   constructor(private router: Router) {
+  }
+
+  requestedURL = "/"
+
+  getRequestedURL(){
+    const url = this.requestedURL.toString()
+    this.requestedURL = "/"
+    return url
   }
 
   setLogin(expiration :string | null = null){
@@ -23,7 +30,7 @@ export class LoginDataService {
     console.log(new Date().toLocaleString())
     return new Date(expiration) > new Date()
   }
-  
+
   setUserType(type :string | null = null){
     if (type == null)
       localStorage.removeItem("type")

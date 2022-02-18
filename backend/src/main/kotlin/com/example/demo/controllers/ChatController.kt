@@ -8,6 +8,7 @@ import com.example.demo.models.MessageDTO
 import com.example.demo.repositories.MessageRepository
 import com.example.demo.services.ActiveUsersManager
 import com.example.demo.services.MessagesCountManager
+import com.example.demo.static.freeUserMessageLimit
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.ResponseEntity
 import org.springframework.messaging.handler.annotation.MessageMapping
@@ -38,7 +39,7 @@ class ChatController @Autowired constructor(
     fun send(auth: Authentication, message: MessageDTO) :ResponseEntity<String>{
         // TODO: Somehow return a ResponseEntity
         val user =  auth.principal as ChatUser
-        if (!user.isPremium() && messagesCountManager.getCount(user) >= 5){ // TODO: change to 100
+        if (!user.isPremium() && messagesCountManager.getCount(user) >= freeUserMessageLimit){
             return ResponseEntity.status(403).body("Reached the massage limit for free users (100)")
         }
         messagesCountManager.increaseCounter(user)

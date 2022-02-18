@@ -2,6 +2,7 @@ import {Component, EventEmitter, OnInit, Output} from '@angular/core';
 import {FormControl, FormGroup, Validators} from "@angular/forms";
 import {AuthService} from "../../services/auth.service";
 import {Router} from "@angular/router";
+import {LoginDataService} from "../../services/login-data.service";
 
 @Component({
   selector: 'app-guest-page',
@@ -21,7 +22,7 @@ export class GuestPageComponent{
     ]),
   });
 
-  constructor(private authService: AuthService, private router: Router) {
+  constructor(private authService: AuthService, private router: Router, private loginData :LoginDataService) {
   }
 
   onSubmit() {
@@ -29,7 +30,7 @@ export class GuestPageComponent{
       this.authService.guest(this.form.value)
         .subscribe({
           next: () => {
-            this.router.navigateByUrl("/")
+            this.router.navigateByUrl(this.loginData.getRequestedURL())
             /*.then(
               nav => {
                 console.log(nav); // true if navigation is successful

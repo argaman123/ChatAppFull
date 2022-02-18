@@ -14,7 +14,7 @@ class RealUserDetailsService @Autowired constructor(
 ) : UserDetailsService {
     override fun loadUserByUsername(email: String): UserDetails {
         userRepository.findByEmail(email)?.let {
-            return RealUser(it)
+            return RealUser(it, userRepository)
         } ?: run {
             throw UsernameNotFoundException("Email not found: $email")
         }
@@ -22,7 +22,7 @@ class RealUserDetailsService @Autowired constructor(
 
     fun loadUserByNickname(nickname :String) :UserDetails {
         userRepository.findByNickname(nickname)?.let {
-            return RealUser(it)
+            return RealUser(it, userRepository)
         } ?: run {
             throw UsernameNotFoundException("Nickname not found: $nickname")
         }

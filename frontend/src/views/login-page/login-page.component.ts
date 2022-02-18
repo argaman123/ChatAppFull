@@ -2,6 +2,7 @@ import {Component, EventEmitter, Input, Output} from '@angular/core';
 import {FormControl, FormGroup, Validators} from "@angular/forms";
 import {AuthService} from "../../services/auth.service";
 import {Router} from "@angular/router";
+import {LoginDataService} from "../../services/login-data.service";
 
 @Component({
   selector: 'app-login-page',
@@ -24,7 +25,7 @@ export class LoginPageComponent {
     ]),
   });
 
-  constructor(private authService: AuthService, private router: Router) {
+  constructor(private authService: AuthService, private router: Router, private loginData: LoginDataService) {
   }
 
   onSubmit() {
@@ -32,7 +33,7 @@ export class LoginPageComponent {
       this.authService.login(this.form.value)
         .subscribe({
           next: () => {
-            this.router.navigateByUrl("/")
+            this.router.navigateByUrl(this.loginData.getRequestedURL())
             /*.then(
               nav => {
                 console.log(nav); // true if navigation is successful

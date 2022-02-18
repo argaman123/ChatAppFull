@@ -1,26 +1,17 @@
 package com.example.demo.controllers
 
-import com.example.demo.entities.Premium
-import com.example.demo.entities.User
-import com.example.demo.jobs.PremiumJobScheduler
-import com.example.demo.jobs.PremiumJobService
+import com.example.demo.services.PremiumBackgroundService
 import com.example.demo.models.ChangePasswordDTO
 import com.example.demo.models.ChatUser
 import com.example.demo.models.PremiumDTO
-import com.example.demo.repositories.PremiumRepository
 import com.example.demo.repositories.UserRepository
-import com.example.demo.services.RealUserDetailsService
-import org.jobrunr.scheduling.JobScheduler
+import com.example.demo.services.EmailService
+import com.example.demo.services.PremiumService
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.ResponseEntity
 import org.springframework.security.core.Authentication
-import org.springframework.security.core.context.SecurityContextHolder
-import org.springframework.security.core.userdetails.UsernameNotFoundException
 import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.web.bind.annotation.*
-import java.time.Instant
-import java.time.temporal.ChronoUnit
-import java.util.*
 
 
 // Actions you can take after you are logged in
@@ -28,11 +19,11 @@ import java.util.*
 @RequestMapping("account")
 class AccountController @Autowired constructor(
     private val userRepository: UserRepository,
-    private val premiumRepository: PremiumRepository,
     private val passwordEncoder: PasswordEncoder,
-    private val premiumJobService: PremiumJobService,
-    private val jobScheduler: JobScheduler
-) {
+    private val premiumService: PremiumService,
+    private val premiumBackgroundService: PremiumBackgroundService,
+    private val emailService: EmailService
+    ) {
 
     @PutMapping("/nickname")
     fun changeNickname(auth: Authentication, @RequestBody nickname: String): ResponseEntity<String> {
@@ -78,29 +69,23 @@ class AccountController @Autowired constructor(
     @PutMapping("/premium")
     fun setPremiumPlan(auth: Authentication, @RequestBody plan: String) :ResponseEntity<PremiumDTO?>{
         (auth.principal as ChatUser).getEmail()?.let { userRepository.findByEmail(it) }?.let {
-            // TODO: make sure plan is different than the current one, even though it should be allowed at frontend
-            if (it.premium == null){
-                val cal = Calendar.getInstance()
-                //val ins = Instant.now().plus(10, ChronoUnit.MINUTES)
-                cal.add(Calendar.MINUTE, 10)
-                it.premium = Premium(expiration = Date.from(cal.toInstant()), plan = plan, user = it)
-                premiumJobService.registerNewPremiumUser(it)
-            } else {
-                if (it.premium?.plan == plan){ // renew
-                    Calendar.getInstance().time = it.premium?.expiration
-                    val newExp = Calendar.getInstance()
-                    newExp.time = it.premium?.expiration
-                    newExp.add(Calendar.MINUTE, 10)
-                    it.premium?.expiration = Date.from(newExp.toInstant())
-                }
-                it.premium?.plan = plan
-            }
-            it.premium?.let { premium ->
-                premiumRepository.saveAndFlush(premium)
-            }
-            userRepository.saveAndFlush(it) // ? Maybe optional in case premium already existed
+            premiumService.switchPlan(it, plan)
+            premiumBackgroundService.updateBackgroundJobs(it)
             return ResponseEntity.ok(PremiumDTO(it.premium?.expiration, it.premium?.plan ?: "none"))
         }
         return ResponseEntity.status(403).body(null)
+    }
+
+    @PutMapping("/renew")
+    fun renew(@RequestBody code: String) :ResponseEntity<String>{
+        val email = emailService.extractEmail(code)
+        email?.let {
+            userRepository.findByEmail(email)?.let {
+                premiumService.renew(it)
+                premiumBackgroundService.updateBackgroundJobs(it)
+                return ResponseEntity.ok("Your one-month plan was renewed successfully")
+            }
+        }
+        return ResponseEntity.status(403).body("Failed to renew. Please try renewing manually from the app.")
     }
 }

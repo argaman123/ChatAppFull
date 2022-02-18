@@ -32,6 +32,7 @@ import {ChangeNicknameComponent} from "../modals/change-nickname/change-nickname
 import {MatDialogModule} from "@angular/material/dialog";
 import {MatSnackBarModule} from "@angular/material/snack-bar";
 import {ChangePasswordComponent} from "../modals/change-password/change-password.component";
+import {RenewPageComponent} from "../views/renew-page/renew-page.component";
 
 @NgModule({
   declarations: [
@@ -46,6 +47,7 @@ import {ChangePasswordComponent} from "../modals/change-password/change-password
     GuestPageComponent,
     ChangeNicknameComponent,
     ChangePasswordComponent,
+    RenewPageComponent
   ],
   imports: [
     BrowserModule,

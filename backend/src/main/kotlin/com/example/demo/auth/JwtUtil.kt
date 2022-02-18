@@ -35,7 +35,6 @@ class JwtUtil {
 
     private fun createToken(claims: Map<String, Any>, subject: String): JWT {
         val expiration = Date(System.currentTimeMillis() + TEN_HOURS)
-        println(expiration.toLocaleString())
         return JWT(Jwts.builder()
             .setClaims(claims)
             .setSubject(subject)

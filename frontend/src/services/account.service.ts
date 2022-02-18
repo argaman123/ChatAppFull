@@ -13,6 +13,12 @@ export class AccountService {
 
   constructor(private http: HttpClient, private chat: ChatService, private loginData: LoginDataService) { }
 
+  renew(email: string){
+    return this.http.put(API + "renew", email, {
+      responseType: 'text'
+    })
+  }
+
   changeNickname(nickname :string){
     return this.http.put(API + "nickname", nickname, {
       withCredentials: true,

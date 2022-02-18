@@ -23,10 +23,6 @@
 			<artifactId>spring-messaging</artifactId>
 		</dependency>
 		<dependency>
-			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-starter-security</artifactId>
-		</dependency>
-		<dependency>
 			<groupId>org.springframework.security</groupId>
 			<artifactId>spring-security-messaging</artifactId>
 		</dependency>
@@ -44,6 +40,11 @@
 			<groupId>org.jobrunr</groupId>
 			<artifactId>jobrunr-spring-boot-starter</artifactId>
 			<version>3.1.2</version>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-mail</artifactId>
+			<version>2.5.6</version>
 		</dependency>
 		<dependency>
 			<groupId>org.springframework.boot</groupId>

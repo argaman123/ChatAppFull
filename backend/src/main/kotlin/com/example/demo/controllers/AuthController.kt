@@ -2,11 +2,11 @@ package com.example.demo.controllers
 
 import com.example.demo.entities.User
 import com.example.demo.auth.JwtUtil
+import com.example.demo.services.PremiumBackgroundService
 import com.example.demo.models.LoginDTO
 import com.example.demo.models.RegisterDTO
 import com.example.demo.models.GuestRequest
 import com.example.demo.repositories.UserRepository
-import com.example.demo.services.ActiveUsersManager
 import com.example.demo.services.RealUserDetailsService
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.ResponseEntity
@@ -25,8 +25,10 @@ class AuthController @Autowired constructor(
     private val authenticationManager: AuthenticationManager,
     private val userDetailsService: RealUserDetailsService,
     private val jwtUtil: JwtUtil,
-    private val passwordEncoder: PasswordEncoder
+    private val passwordEncoder: PasswordEncoder,
+    private val premiumBackgroundService: PremiumBackgroundService
 ) {
+
     @PostMapping("/login")
     fun login(@RequestBody loginDTO: LoginDTO, res: HttpServletResponse): ResponseEntity<String> {
         try {

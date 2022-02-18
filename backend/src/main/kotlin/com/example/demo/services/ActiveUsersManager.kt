@@ -30,26 +30,26 @@ class ActiveUsersManager @Autowired constructor(
         messagingTemplate.convertAndSend("/topic/users", event)
     }
 
-    private fun handleSessionEvent(event :AbstractSubProtocolEvent, type :String) :List<Any>{
+    private fun handleSessionEvent(event :AbstractSubProtocolEvent, type :String) : Map<String, Any> {
         val user = ((event.user as AbstractAuthenticationToken).principal as ChatUser)
         val nickname = user.getNickname()
         val id = user.getEmail() ?: nickname
         sendEvent(UserConnectionEvent(id, nickname, type))
-        return listOf(id, nickname, user)
+        return mapOf("id" to id, "nickname" to nickname, "user" to user)
     }
 
     @EventListener
     private fun handleSessionConnected(event: SessionConnectEvent){
         val details = handleSessionEvent(event, "connected")
-        nicknames[details[0] as String] = details[1] as String
-        messagesCountManager.addUser(details[2] as ChatUser)
+        nicknames[details["id"] as String] = details["nickname"] as String
+        messagesCountManager.addUser(details["user"] as ChatUser)
     }
 
     @EventListener
     private fun handleSessionDisconnected(event: SessionDisconnectEvent){
         val details = handleSessionEvent(event, "disconnected")
-        nicknames.remove(details[0])
-        messagesCountManager.removeUser(details[2] as ChatUser)
+        nicknames.remove(details["id"])
+        messagesCountManager.removeUser(details["user"] as ChatUser)
     }
 
 }

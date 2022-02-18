@@ -33,7 +33,7 @@ class WebSecurityConfig @Autowired constructor(
         http.cors()
             .and().csrf().disable()
             .authorizeRequests()
-            .antMatchers("/auth/**").permitAll()
+            .antMatchers("/auth/**", "/account/renew/**").permitAll()
             .anyRequest().authenticated()
             .and().sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
             .and()

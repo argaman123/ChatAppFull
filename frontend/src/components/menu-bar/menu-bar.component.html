@@ -12,19 +12,15 @@
     <span class="spacer"></span>
     <div class="account-type" [ngClass]="premium.plan" [ngSwitch]="premium.plan" *ngIf="isUser()">
       <ng-container *ngSwitchCase="'none'">You are using a free account</ng-container>
-      <ng-container *ngSwitchCase="'one-month'">Congrats! You're premium until {{premium.expiration | date}}</ng-container>
-      <ng-container *ngSwitchCase="'subscription'">Congrats! You're subscribed to premium! Renewal date is {{premium.expiration | date}}</ng-container>
+      <ng-container *ngSwitchCase="'one-month'">Congrats! You're premium until {{premium.expiration | date : "MMM dd, yyyy 'at' HH:mm"}}</ng-container>
+      <ng-container *ngSwitchCase="'subscription'">Congrats! You're subscribed to premium! Renewal date is {{premium.expiration | date : "MMM dd, yyyy 'at' HH:mm"}}</ng-container>
     </div>
     <button *ngIf="isUser()" mat-raised-button
             [matMenuTriggerFor]="menu2">{{premium.plan == "none" ? "Buy premium" : "Change plan" }}</button>
     <mat-menu #menu2="matMenu">
-      <!--
-            <button *ngIf="plan == 'subscription'" mat-menu-item (click)="onPlan('none')">Cancel subscription</button>
-            not needed since switching from subscription to none will leave you at the one-month plan anyways
-      -->
       <button mat-menu-item (click)="onPlan('one-month')" [ngSwitch]="premium.plan">
         <ng-container *ngSwitchCase="'none'">One month plan</ng-container>
-        <ng-container *ngSwitchCase="'one-month'">Renew current plan</ng-container>
+        <ng-container *ngSwitchCase="'one-month'">Buy another month</ng-container>
         <ng-container *ngSwitchCase="'subscription'">Cancel subscription</ng-container>
       </button>
       <button *ngIf="premium.plan != 'subscription'" mat-menu-item (click)="onPlan('subscription')">Subscription plan</button>

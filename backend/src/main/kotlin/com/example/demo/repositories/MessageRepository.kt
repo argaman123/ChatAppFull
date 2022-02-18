@@ -7,4 +7,5 @@ import org.springframework.stereotype.Repository
 @Repository
 interface MessageRepository : JpaRepository<Message, Long>{
     fun countByEmail(email :String) :Long?
+    fun findByEmailOrderByDatetimeDesc(email :String) :List<Message>
 }

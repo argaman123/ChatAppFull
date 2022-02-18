@@ -13,6 +13,7 @@ export class LoggedInGuard implements CanActivate {
 
   canActivate(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): boolean {
     if (!this.loginData.isLoggedIn()) {
+      this.loginData.requestedURL = state.url
       this.router.navigateByUrl("/login")
       return false;
     }

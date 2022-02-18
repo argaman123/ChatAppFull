@@ -30,7 +30,7 @@ class JwtAuthFilter @Autowired constructor(
         const val tokenPrefix = "Bearer "
     }
 
-    private val skipFilterUrls: List<String> = listOf("/auth/**")
+    private val skipFilterUrls: List<String> = listOf("/auth/**", "/account/renew/**")
 
     override fun shouldNotFilter(request: HttpServletRequest): Boolean {
         return skipFilterUrls.stream().anyMatch { url: String ->
