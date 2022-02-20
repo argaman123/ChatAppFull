@@ -26,6 +26,7 @@ class RealUser(
 
     override fun getNickname(): String = _nickname
     override fun getEmail(): String? = username
+    override fun getID(): String = username
     override fun isPremium(): Boolean {
         _premium?.let {
             return when (it.plan) {

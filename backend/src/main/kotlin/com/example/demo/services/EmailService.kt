@@ -44,24 +44,31 @@ class EmailService @Autowired constructor(
     }
 
     fun sendRenewWarning(email :String, renewURL :String? = null){
-        val msg = SimpleMailMessage()
+        /*val msg = SimpleMailMessage()
         msg.setTo(email)
         msg.setSubject("ChatApp - A reminder to renew your one-month premium plan")
         msg.setText("Hi,\n" +
                 "We want to remind you to renew your one-month premium plan in the next two days, otherwise your messages might get deleted\n" +
                 "Click this link if you want to renew right now "+ (renewURL ?: getRenewUrl(email)) + "\n" +
                 "Best regards, ChatApp")
-        javaMailSender.send(msg)
+        javaMailSender.send(msg)*/
+        println("Hi,\n" +
+                "We want to remind you to renew your one-month premium plan in the next two days, otherwise your messages might get deleted\n" +
+                "Click this link if you want to renew right now "+ (renewURL ?: getRenewUrl(email)) + "\n" +
+                "Best regards, ChatApp")
     }
 
     fun sendRenewedNotification(email :String){
-        val msg = SimpleMailMessage()
+        /*val msg = SimpleMailMessage()
         msg.setTo(email)
         msg.setSubject("ChatApp - Your premium plan was automatically renewed")
         msg.setText("Hi,\n" +
                 "We want to let you know your premium plan was automatically renewed\n" +
                 "Best regards, ChatApp")
-        javaMailSender.send(msg)
+        javaMailSender.send(msg)*/
+        println("Hi,\n" +
+                "We want to let you know your premium plan was automatically renewed\n" +
+                "Best regards, ChatApp")
     }
 
 }

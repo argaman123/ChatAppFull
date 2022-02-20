@@ -18,6 +18,7 @@ class GuestAuthenticationProvider(
     ): AuthenticationProvider {
 
     override fun authenticate(auth: Authentication): Authentication? {
+        // probably better to generate a UUID as ID instead of just the nickname
         try {
             realUserDetailsService.loadUserByNickname(auth.name)
         } catch (e: UsernameNotFoundException){

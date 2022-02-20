@@ -32,6 +32,7 @@ export class ChatService {
         this.stompClient.connect({}, () => {
           this._handleNewMessage()
           this._handleNewUser()
+          this._handleMessageReply()
           subscriber.next()
         }, err => {
           this.loginData.immediateLogout()
@@ -44,24 +45,31 @@ export class ChatService {
     }).pipe(first())
   }
 
-  disconnect(callback: (() => void)){
+  disconnect(callback: (() => void)) {
     this.stompClient?.disconnect(callback)
   }
 
   private _onNewMessage = new Subject<ChatMessage>()
 
-  private _handleNewMessage() {
+  private static _reviver(key: string, value: any) {
     const dateFormat = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d{3}\+\d{2}:\d{2}$/ // PROBABLY NEEDS A MORE ABSTRACT SOLUTION
-    function reviver(key: string, value: any) {
-      if (typeof value === "string" && dateFormat.test(value)) {
-        return new Date(value);
-      }
-      return value;
+    if (typeof value === "string" && dateFormat.test(value)) {
+      return new Date(value);
     }
+    return value;
+  }
 
+  private _handleMessageReply() {
+    this.stompClient?.subscribe("/user/topic/reply", (message: Message) => {
+      console.log(message.body)
+      this._onNewMessage.next(JSON.parse(message.body, ChatService._reviver))
+    })
+  }
+
+  private _handleNewMessage() {
     this.stompClient?.subscribe("/topic/chat", (message: Message) => {
       console.log(message)
-      this._onNewMessage.next(JSON.parse(message.body, reviver))
+      this._onNewMessage.next(JSON.parse(message.body, ChatService._reviver))
     })
   }
 

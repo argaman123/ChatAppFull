@@ -14,6 +14,7 @@ import org.springframework.http.ResponseEntity
 import org.springframework.messaging.handler.annotation.MessageMapping
 import org.springframework.messaging.handler.annotation.SendTo
 import org.springframework.messaging.simp.SimpMessagingTemplate
+import org.springframework.messaging.simp.annotation.SendToUser
 import org.springframework.security.core.Authentication
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.RestController
@@ -26,29 +27,32 @@ class ChatController @Autowired constructor(
     private val messagingTemplate: SimpMessagingTemplate
 ) {
     @GetMapping("/chat/history")
-    fun chatInit() : ResponseEntity<List<ChatMessage>> {
+    fun chatInit(): ResponseEntity<List<ChatMessage>> {
         return ResponseEntity.ok(messageRepository.findAll().map { ChatMessage(it) })
     }
 
     @GetMapping("/chat/users")
-    fun usersInit() : ResponseEntity<Map<String, String>> {
+    fun usersInit(): ResponseEntity<Map<String, String>> {
         return ResponseEntity.ok(activeUsersManager.nicknames)
     }
 
     @MessageMapping("/send")
-    fun send(auth: Authentication, message: MessageDTO) :ResponseEntity<String>{
+    fun send(auth: Authentication, message: MessageDTO) {
         // TODO: Somehow return a ResponseEntity
-        val user =  auth.principal as ChatUser
-        if (!user.isPremium() && messagesCountManager.getCount(user) >= freeUserMessageLimit){
-            return ResponseEntity.status(403).body("Reached the massage limit for free users (100)")
+        val user = auth.principal as ChatUser
+        if (!user.isPremium() && messagesCountManager.getCount(user) >= freeUserMessageLimit) {
+            messagingTemplate.convertAndSendToUser(
+                user.getID(),
+                "/topic/reply",
+                ChatMessage(user.getNickname(), "Reached the massage limit for free users (${freeUserMessageLimit})", type = "alert")
+            )
+        } else {
+            messagesCountManager.increaseCounter(user)
+            val chatMessage = ChatMessage(user.getNickname(), message.content)
+            messageRepository.saveAndFlush(Message(chatMessage, user))
+            messagingTemplate.convertAndSend("/topic/chat", chatMessage)
         }
-        messagesCountManager.increaseCounter(user)
-        val chatMessage = ChatMessage(user.getNickname(), message.content)
-        messageRepository.saveAndFlush(Message(chatMessage, user))
-        messagingTemplate.convertAndSend("/topic/chat", chatMessage)
-        return ResponseEntity.ok("Message was sent successfully")
     }
-
 
 
     /*@GetMapping("/users", produces = [MediaType.TEXT_EVENT_STREAM_VALUE])

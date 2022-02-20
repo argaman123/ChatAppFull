@@ -13,4 +13,5 @@ interface ChatMessage {
   from :string
   datetime :Date
   content: string
+  type: string
 }

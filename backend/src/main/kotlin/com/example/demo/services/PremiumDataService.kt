@@ -58,6 +58,6 @@ class PremiumDataService @Autowired constructor(
             user.premium = createPremium(plan, user)
         }
         userRepository.saveAndFlush(user)
-        premiumRepository.saveAndFlush(user.premium!!)
+        user.premium?.let { premiumRepository.saveAndFlush(it) }
     }
 }

@@ -54,4 +54,19 @@
       padding-left: 8px;
     }
   }
+  .alert {
+    display: flex;
+    width: 100%;
+    justify-content: center;
+    align-items: center;
+    .content {
+      padding: 10px;
+      border-radius: 10px;
+      font-size: 17px;
+      background: #424248;
+      color: #c7c7c7;
+      width: max-content;
+      font-family: "Roboto Medium", serif;
+    }
+  }
 }

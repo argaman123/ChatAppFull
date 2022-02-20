@@ -33,7 +33,7 @@ class ActiveUsersManager @Autowired constructor(
     private fun handleSessionEvent(event :AbstractSubProtocolEvent, type :String) : Map<String, Any> {
         val user = ((event.user as AbstractAuthenticationToken).principal as ChatUser)
         val nickname = user.getNickname()
-        val id = user.getEmail() ?: nickname
+        val id = user.getID()
         sendEvent(UserConnectionEvent(id, nickname, type))
         return mapOf("id" to id, "nickname" to nickname, "user" to user)
     }

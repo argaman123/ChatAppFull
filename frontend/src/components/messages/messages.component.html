@@ -1,7 +1,12 @@
 <div class="container" #container (click)="onUnselect()">
-  <div class="message" *ngFor="let message of messages" [ngClass]="{selected: message == currentMessage}" (click)="$event.stopPropagation(); onSelect(message)">
-    <div class="nickname">{{message.from}}</div>
-    <div class="time">- {{message.datetime | date:'dd.MM.yy HH:mm'}}:</div>
-    <div class="content">{{message.content}}</div>
-  </div>
+  <ng-container *ngFor="let message of messages" [ngSwitch]="message.type">
+    <div *ngSwitchCase="'message'" class="message" [ngClass]="{selected: message == currentMessage}" (click)="$event.stopPropagation(); onSelect(message)">
+      <div class="nickname">{{message.from}}</div>
+      <div class="time">- {{message.datetime | date:'dd.MM.yy HH:mm'}}:</div>
+      <div class="content">{{message.content}}</div>
+    </div>
+    <div *ngSwitchCase="'alert'" class="alert">
+      <div class="content">{{message.content}}</div>
+    </div>
+  </ng-container>
 </div>
