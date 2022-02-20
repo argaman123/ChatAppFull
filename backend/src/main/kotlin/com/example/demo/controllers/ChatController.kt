@@ -38,7 +38,6 @@ class ChatController @Autowired constructor(
 
     @MessageMapping("/send")
     fun send(auth: Authentication, message: MessageDTO) {
-        // TODO: Somehow return a ResponseEntity
         val user = auth.principal as ChatUser
         if (!user.isPremium() && messagesCountManager.getCount(user) >= freeUserMessageLimit) {
             messagingTemplate.convertAndSendToUser(
