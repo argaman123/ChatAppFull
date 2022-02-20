@@ -1,7 +1,16 @@
 import {Component, EventEmitter, OnInit, Output} from '@angular/core';
-import {FormControl, FormGroup, Validators} from "@angular/forms";
+import {
+  AbstractControl,
+  FormControl,
+  FormGroup,
+  FormGroupDirective,
+  NgForm,
+  ValidationErrors,
+  Validators
+} from "@angular/forms";
 import {AuthService} from "../../services/auth.service";
 import {Router} from "@angular/router";
+import {ErrorStateMatcher} from "@angular/material/core";
 
 @Component({
   selector: 'app-register-page',
@@ -9,8 +18,11 @@ import {Router} from "@angular/router";
   styleUrls: ['./register-page.component.scss']
 })
 export class RegisterPageComponent {
-
-  error: string | null = null
+  matcher = new class implements ErrorStateMatcher {
+    isErrorState(control: FormControl | null, form: FormGroupDirective | NgForm | null): boolean {
+      return form?.hasError("notSame") || false
+    }
+  }
   errors: string = ''
   @Output() submit = new EventEmitter()
   form: FormGroup = new FormGroup({
@@ -31,7 +43,12 @@ export class RegisterPageComponent {
       Validators.pattern(/\d/),
       Validators.pattern(/[a-zA-Z]/)
     ]),
-  });
+    confirmedPassword: new FormControl('', [Validators.required])
+  }, {
+    validators: (group: AbstractControl): ValidationErrors | null => {
+      return group.get("password")?.value == group.get("confirmedPassword")?.value ? null : {notSame: true}
+    }
+  })
 
   constructor(private authService: AuthService, private router: Router) {
   }

@@ -27,6 +27,13 @@
             Password must include digits and letters.
           </mat-error>
         </mat-form-field>
+        <mat-form-field>
+          <mat-label>Confirm password</mat-label>
+          <input type="password" matInput required formControlName="confirmedPassword" [errorStateMatcher]="matcher">
+          <mat-error *ngIf="form.hasError('notSame')">
+            Passwords are not matching.
+          </mat-error>
+        </mat-form-field>
         <mat-error style="white-space: pre-wrap">{{errors}}</mat-error>
         <div class="buttons">
           <a routerLink="/guest" mat-stroked-button>Guest</a>

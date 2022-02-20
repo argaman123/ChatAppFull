@@ -21,7 +21,7 @@ export class MenuBarComponent {
               public dialog: MatDialog,
               private snackBar: MatSnackBar) {
 
-  }//) { }
+  }
 
   isUser() {
     return this.loginData.isUser()
