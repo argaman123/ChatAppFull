@@ -12,17 +12,25 @@ import {AccountService} from "../../services/account.service";
 import {MatSnackBar} from "@angular/material/snack-bar";
 import {ErrorStateMatcher} from "@angular/material/core";
 
+class CustomErrorStateMatcher implements ErrorStateMatcher {
+  errorCode: string
+  constructor(errorCode: string) {
+    this.errorCode = errorCode
+  }
+
+  isErrorState(control: FormControl | null, form: FormGroupDirective | NgForm | null): boolean {
+    return form?.hasError(this.errorCode) || false
+  }
+}
+
 @Component({
   selector: 'app-change-password',
   templateUrl: './change-password.component.html',
   styleUrls: ['./change-password.component.scss']
 })
 export class ChangePasswordComponent {
-  matcher = new class implements ErrorStateMatcher {
-    isErrorState(control: FormControl | null, form: FormGroupDirective | NgForm | null): boolean {
-      return form?.hasError("notSame") || false
-    }
-  }
+  matcherNew = new CustomErrorStateMatcher("notSameNew")
+  matcherOld = new CustomErrorStateMatcher("notSameOld")
 
   form: FormGroup = new FormGroup({
     oldPassword: new FormControl('', [
@@ -32,6 +40,7 @@ export class ChangePasswordComponent {
       Validators.pattern(/\d/),
       Validators.pattern(/[a-zA-Z]/)
     ]),
+    confirmedOldPassword: new FormControl('', [Validators.required]),
     newPassword: new FormControl('', [
       Validators.required,
       Validators.minLength(8),
@@ -39,10 +48,12 @@ export class ChangePasswordComponent {
       Validators.pattern(/\d/),
       Validators.pattern(/[a-zA-Z]/)
     ]),
-    confirmedPassword: new FormControl('', [Validators.required])
+    confirmedNewPassword: new FormControl('', [Validators.required])
   }, {
     validators: (group: AbstractControl): ValidationErrors | null => {
-      return group.get("newPassword")?.value == group.get("confirmedPassword")?.value ? null : {notSame: true}
+      const newSame = group.get("newPassword")?.value == group.get("confirmedNewPassword")?.value ? null : {notSameNew: true}
+      const oldSame = group.get("oldPassword")?.value == group.get("confirmedOldPassword")?.value ? null : {notSameOld: true}
+      return {...newSame, ...oldSame}
     }
   });
 
@@ -51,7 +62,6 @@ export class ChangePasswordComponent {
               private snackBar: MatSnackBar,
   ) {
   }
-
 
   onOk() {
     if (this.form.valid) {

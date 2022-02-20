@@ -13,7 +13,6 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import java.time.Instant
-import java.time.temporal.ChronoUnit
 import java.util.*
 import com.example.demo.entities.Job as JobEntity
 
@@ -21,7 +20,7 @@ import com.example.demo.entities.Job as JobEntity
 class PremiumBackgroundService @Autowired constructor(
     private val jobScheduler: JobScheduler,
     private val emailService: EmailService,
-    private val premiumService: PremiumService,
+    private val premiumDataService: PremiumDataService,
     private val userRepository: UserRepository,
     private val messageRepository: MessageRepository,
     private val premiumRepository: PremiumRepository,
@@ -94,7 +93,7 @@ class PremiumBackgroundService @Autowired constructor(
     fun renewSubscription(email: String) {
         println("renewSubscription($email)")
         userRepository.findByEmail(email)?.let {
-            premiumService.renew(it)
+            premiumDataService.renew(it)
             emailService.sendRenewedNotification(email)
         }
         userRepository.findByEmail(email)?.let {

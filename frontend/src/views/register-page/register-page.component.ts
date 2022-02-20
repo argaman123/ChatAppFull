@@ -43,7 +43,8 @@ export class RegisterPageComponent {
       Validators.pattern(/\d/),
       Validators.pattern(/[a-zA-Z]/)
     ]),
-    confirmedPassword: new FormControl('', [Validators.required])
+    confirmedPassword: new FormControl('', [Validators.required]),
+    premiumPlan: new FormControl('none')
   }, {
     validators: (group: AbstractControl): ValidationErrors | null => {
       return group.get("password")?.value == group.get("confirmedPassword")?.value ? null : {notSame: true}

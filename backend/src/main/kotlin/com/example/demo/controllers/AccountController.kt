@@ -6,6 +6,7 @@ import com.example.demo.models.ChatUser
 import com.example.demo.models.PremiumDTO
 import com.example.demo.repositories.UserRepository
 import com.example.demo.services.EmailService
+import com.example.demo.services.PremiumDataService
 import com.example.demo.services.PremiumService
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.ResponseEntity
@@ -21,7 +22,6 @@ class AccountController @Autowired constructor(
     private val userRepository: UserRepository,
     private val passwordEncoder: PasswordEncoder,
     private val premiumService: PremiumService,
-    private val premiumBackgroundService: PremiumBackgroundService,
     private val emailService: EmailService
     ) {
 
@@ -70,7 +70,6 @@ class AccountController @Autowired constructor(
     fun setPremiumPlan(auth: Authentication, @RequestBody plan: String) :ResponseEntity<PremiumDTO?>{
         (auth.principal as ChatUser).getEmail()?.let { userRepository.findByEmail(it) }?.let {
             premiumService.switchPlan(it, plan)
-            premiumBackgroundService.updateBackgroundJobs(it)
             return ResponseEntity.ok(PremiumDTO(it.premium?.expiration, it.premium?.plan ?: "none"))
         }
         return ResponseEntity.status(403).body(null)
@@ -82,7 +81,6 @@ class AccountController @Autowired constructor(
         email?.let {
             userRepository.findByEmail(email)?.let {
                 premiumService.renew(it)
-                premiumBackgroundService.updateBackgroundJobs(it)
                 return ResponseEntity.ok("Your one-month plan was renewed successfully")
             }
         }

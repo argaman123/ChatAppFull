@@ -7,6 +7,8 @@ import com.example.demo.models.LoginDTO
 import com.example.demo.models.RegisterDTO
 import com.example.demo.models.GuestRequest
 import com.example.demo.repositories.UserRepository
+import com.example.demo.services.PremiumDataService
+import com.example.demo.services.PremiumService
 import com.example.demo.services.RealUserDetailsService
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.ResponseEntity
@@ -26,7 +28,7 @@ class AuthController @Autowired constructor(
     private val userDetailsService: RealUserDetailsService,
     private val jwtUtil: JwtUtil,
     private val passwordEncoder: PasswordEncoder,
-    private val premiumBackgroundService: PremiumBackgroundService
+    private val premiumService: PremiumService
 ) {
 
     @PostMapping("/login")
@@ -72,13 +74,13 @@ class AuthController @Autowired constructor(
             errors.add("Nickname is already taken")
         }
         return if (errors.isEmpty()) {
-            userRepository.saveAndFlush(
+            premiumService.switchPlan(
                 User(
                     nickname = registerDTO.nickname,
                     email = registerDTO.email,
                     password = passwordEncoder.encode(registerDTO.password),
                     roles = "USER"
-                )
+                ), registerDTO.premiumPlan
             )
             ResponseEntity.ok("success")
         } else

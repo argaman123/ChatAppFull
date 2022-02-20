@@ -33,6 +33,7 @@ import {MatDialogModule} from "@angular/material/dialog";
 import {MatSnackBarModule} from "@angular/material/snack-bar";
 import {ChangePasswordComponent} from "../modals/change-password/change-password.component";
 import {RenewPageComponent} from "../views/renew-page/renew-page.component";
+import {MatButtonToggleModule} from "@angular/material/button-toggle";
 
 @NgModule({
   declarations: [
@@ -64,7 +65,8 @@ import {RenewPageComponent} from "../views/renew-page/renew-page.component";
     MatToolbarModule,
     MatMenuModule,
     MatDialogModule,
-    MatSnackBarModule
+    MatSnackBarModule,
+    MatButtonToggleModule
   ],
   providers: [WebsocketService, AuthGuard, AuthService, ChatService, LoginDataService, AccountService, {
     provide: HTTP_INTERCEPTORS,
