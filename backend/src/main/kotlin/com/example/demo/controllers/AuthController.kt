@@ -34,6 +34,7 @@ class AuthController @Autowired constructor(
     @PostMapping("/login")
     fun login(@RequestBody loginDTO: LoginDTO, res: HttpServletResponse): ResponseEntity<String> {
         try {
+            println(loginDTO)
             authenticationManager.authenticate(loginDTO.getToken())
         } catch (e: BadCredentialsException) {
             return ResponseEntity.status(403).body("Incorrect email address or password.")

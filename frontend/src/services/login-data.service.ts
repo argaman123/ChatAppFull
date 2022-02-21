@@ -1,5 +1,6 @@
 import {Injectable} from "@angular/core";
 import {Router} from "@angular/router";
+import {BehaviorSubject} from "rxjs";
 
 @Injectable({
   providedIn: 'root'
@@ -9,6 +10,12 @@ export class LoginDataService {
   }
 
   requestedURL = "/"
+
+  private _loginStatus = new BehaviorSubject<boolean>(this.isLoggedIn())
+
+  getLoginStatus(){
+    return this._loginStatus.asObservable()
+  }
 
   getRequestedURL(){
     const url = this.requestedURL.toString()
@@ -21,6 +28,10 @@ export class LoginDataService {
       localStorage.removeItem("expiration")
     else
       localStorage.setItem("expiration", expiration)
+    if (this._loginStatus.value != this.isLoggedIn()) {
+      console.log("pushed " + !this._loginStatus.value)
+      this._loginStatus.next(!this._loginStatus.value)
+    }
   }
 
   isLoggedIn(){
@@ -49,13 +60,16 @@ export class LoginDataService {
 
   // One implementation for any time you need to immediately log out (used in authInterceptor for instance)
   immediateLogout(){
-    const url = this.router.routerState.snapshot.url
-    if (!url.endsWith("/login") && !url.endsWith("/register") && !url.endsWith("guest")) {
+    /*const url = this.router.routerState.snapshot.url
+    if (!url.endsWith("/login") && !url.endsWith("/register") && !url.endsWith("/guest")) {
       this.logout()
       this.router.navigateByUrl("/login")
       return true
     }
     return false
+*/
+    this.logout()
+    window.location.reload(); // only to clear all the data inside all components
   }
 
 }

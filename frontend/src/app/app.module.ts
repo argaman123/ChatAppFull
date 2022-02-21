@@ -1,3 +1,4 @@
+import { TestComponentComponent } from './../views/test-component/test-component.component';
 import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 
@@ -16,17 +17,14 @@ import {MatInputModule} from "@angular/material/input";
 import {FormsModule, ReactiveFormsModule} from "@angular/forms";
 import {WebsocketService} from "../unused/websocket.service";
 import {HTTP_INTERCEPTORS, HttpClientModule} from "@angular/common/http";
-import {LoginPageComponent} from "../views/login-page/login-page.component";
 import {AuthGuard} from "../unused/AuthGuard";
 import {AuthService} from "../services/auth.service";
 import {MatButtonModule} from "@angular/material/button";
 import {ChatService} from "../services/chat.service";
 import {MatToolbarModule} from "@angular/material/toolbar";
-import {RegisterPageComponent} from "../views/register-page/register-page.component";
 import {MatMenuModule} from "@angular/material/menu";
 import {AuthInterceptor} from "../services/auth.interceptor";
 import {LoginDataService} from "../services/login-data.service";
-import {GuestPageComponent} from "../views/guest-page/guest-page.component";
 import {AccountService} from "../services/account.service";
 import {ChangeNicknameComponent} from "../modals/change-nickname/change-nickname.component";
 import {MatDialogModule} from "@angular/material/dialog";
@@ -34,6 +32,8 @@ import {MatSnackBarModule} from "@angular/material/snack-bar";
 import {ChangePasswordComponent} from "../modals/change-password/change-password.component";
 import {RenewPageComponent} from "../views/renew-page/renew-page.component";
 import {MatButtonToggleModule} from "@angular/material/button-toggle";
+import { AuthenticationComponent } from 'src/modals/authentication/authentication.component';
+import {MatTabsModule} from "@angular/material/tabs";
 
 @NgModule({
   declarations: [
@@ -43,31 +43,31 @@ import {MatButtonToggleModule} from "@angular/material/button-toggle";
     MessagesComponent,
     MessageAreaComponent,
     MenuBarComponent,
-    LoginPageComponent,
-    RegisterPageComponent,
-    GuestPageComponent,
     ChangeNicknameComponent,
     ChangePasswordComponent,
-    RenewPageComponent
+    RenewPageComponent,
+    AuthenticationComponent,
+    TestComponentComponent
   ],
-  imports: [
-    BrowserModule,
-    AppRoutingModule,
-    MatListModule,
-    BrowserAnimationsModule,
-    MatIconModule,
-    MatCardModule,
-    MatInputModule,
-    FormsModule,
-    HttpClientModule,
-    ReactiveFormsModule,
-    MatButtonModule,
-    MatToolbarModule,
-    MatMenuModule,
-    MatDialogModule,
-    MatSnackBarModule,
-    MatButtonToggleModule
-  ],
+    imports: [
+        BrowserModule,
+        AppRoutingModule,
+        MatListModule,
+        BrowserAnimationsModule,
+        MatIconModule,
+        MatCardModule,
+        MatInputModule,
+        FormsModule,
+        HttpClientModule,
+        ReactiveFormsModule,
+        MatButtonModule,
+        MatToolbarModule,
+        MatMenuModule,
+        MatDialogModule,
+        MatSnackBarModule,
+        MatButtonToggleModule,
+        MatTabsModule
+    ],
   providers: [WebsocketService, AuthGuard, AuthService, ChatService, LoginDataService, AccountService, {
     provide: HTTP_INTERCEPTORS,
     useFactory: function(loginData: LoginDataService) {

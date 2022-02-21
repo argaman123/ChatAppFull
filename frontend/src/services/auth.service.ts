@@ -1,12 +1,12 @@
 import {Injectable} from '@angular/core';
 import {HttpClient} from "@angular/common/http";
-import {first, firstValueFrom, flatMap, map, Observable} from "rxjs";
+import {first, firstValueFrom, map, Observable} from "rxjs";
 import * as SockJS from "sockjs-client";
 import * as Stomp from "stompjs";
 import {ChatService} from "./chat.service";
 import {Router} from "@angular/router";
 import {LoginDataService} from "./login-data.service";
-
+import * as Hash from "js-sha256"
 const API = "http://localhost:8080/auth/"
 
 @Injectable({
@@ -25,16 +25,17 @@ export class AuthService {
           withCredentials: true
         }).subscribe({
           next: expiration => {
-            this.loginData.setLogin(expiration)
             this.loginData.setUserType(type)
-            this.chat.connect().subscribe({
+            this.loginData.setLogin(expiration)
+            subscriber.next()
+            /*this.chat.connect().subscribe({
               next: () => {
                 subscriber.next()
               },
               error: err => {
                 subscriber.error(err)
               }
-            })
+            })*/
           },
           error: err => {
             subscriber.error(err)
@@ -46,8 +47,11 @@ export class AuthService {
     }).pipe(first())
   }
 
-  login(credentials: { username: string, password: string }) {
-    return this._loginLogic("user", credentials)
+  // The idea of hashing the password before sending is pretty much useless, since the attacker probably doesn't even
+  // need the real password. But I implemented it anyway since it was requested
+
+  login(credentials: { email: string, password: string }) {
+    return this._loginLogic("user", {username: credentials.email, password: Hash.sha256(credentials.password)})
   }
 
   guest(credentials : { nickname :string }){
@@ -55,6 +59,7 @@ export class AuthService {
   }
 
   register(credentials: { email: string, nickname: string, password: string }) {
+    credentials.password = Hash.sha256(credentials.password)
     return new Observable<string>(subscriber => {
       this.http.post(API + "register", credentials, {
         responseType: 'text',

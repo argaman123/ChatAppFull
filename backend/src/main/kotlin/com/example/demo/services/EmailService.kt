@@ -43,18 +43,20 @@ class EmailService @Autowired constructor(
         return renewRepository.findByUrl(renewURL)?.email
     }
 
-    fun sendRenewWarning(email :String, renewURL :String? = null){
+    // TODO: Switch back to sending emails
+
+    fun sendRenewWarning(email :String){
         /*val msg = SimpleMailMessage()
         msg.setTo(email)
         msg.setSubject("ChatApp - A reminder to renew your one-month premium plan")
         msg.setText("Hi,\n" +
                 "We want to remind you to renew your one-month premium plan in the next two days, otherwise your messages might get deleted\n" +
-                "Click this link if you want to renew right now "+ (renewURL ?: getRenewUrl(email)) + "\n" +
+                "Click this link if you want to renew right now ${getRenewUrl(email)}\n" +
                 "Best regards, ChatApp")
         javaMailSender.send(msg)*/
         println("Hi,\n" +
                 "We want to remind you to renew your one-month premium plan in the next two days, otherwise your messages might get deleted\n" +
-                "Click this link if you want to renew right now "+ (renewURL ?: getRenewUrl(email)) + "\n" +
+                "Click this link if you want to renew right now ${getRenewUrl(email)}\n" +
                 "Best regards, ChatApp")
     }
 
