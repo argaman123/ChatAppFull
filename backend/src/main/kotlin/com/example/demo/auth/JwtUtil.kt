@@ -1,5 +1,6 @@
 package com.example.demo.auth
 
+import com.example.demo.static.SECRET_KEY
 import io.jsonwebtoken.Claims
 import io.jsonwebtoken.Jwts
 import io.jsonwebtoken.SignatureAlgorithm
@@ -10,7 +11,6 @@ import java.util.*
 import kotlin.collections.HashMap
 import kotlin.reflect.KFunction1
 
-
 @Service
 class JwtUtil {
 
@@ -19,9 +19,6 @@ class JwtUtil {
     companion object {
         const val TEN_HOURS = 1000 * 60 * 60 * 10
     }
-
-    // TODO : MOVE THIS OUT OF HERE
-    private val SECRET_KEY = "secret"
 
     fun extractAllClaims(token: String): Claims {
         return Jwts.parser().setSigningKey(SECRET_KEY).parseClaimsJws(token).body

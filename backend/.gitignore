@@ -20,3 +20,4 @@ target/
 *.ipr
 
 /src/main/resources/application.properties
+/src/main/kotlin/com/example/demo/static/secrets.kt
