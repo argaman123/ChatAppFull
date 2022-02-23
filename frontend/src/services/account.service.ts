@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import {BehaviorSubject, map, Observable, Subject} from "rxjs";
+import {BehaviorSubject, first, map, Observable, Subject} from "rxjs";
 import {HttpClient} from "@angular/common/http";
 import {ChatService} from "./chat.service";
 import {LoginDataService} from "./login-data.service";
@@ -12,6 +12,7 @@ const API = "http://localhost:8080/account/"
 export class AccountService {
 
   constructor(private http: HttpClient, private chat: ChatService, private loginData: LoginDataService) { }
+
 
   renew(email: string){
     return this.http.put(API + "renew", email, {

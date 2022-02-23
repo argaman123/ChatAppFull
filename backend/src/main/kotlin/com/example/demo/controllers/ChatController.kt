@@ -2,12 +2,16 @@ package com.example.demo.controllers
 
 //import com.example.demo.service.ActiveUserManager
 import com.example.demo.entities.Message
+import com.example.demo.entities.Notification
 import com.example.demo.models.ChatMessage
 import com.example.demo.models.ChatUser
 import com.example.demo.models.MessageDTO
+import com.example.demo.models.NotificationDTO
 import com.example.demo.repositories.MessageRepository
+import com.example.demo.repositories.NotificationRepository
 import com.example.demo.services.ActiveUsersManager
 import com.example.demo.services.MessagesCountManager
+import com.example.demo.services.NotificationService
 import com.example.demo.static.freeUserMessageLimit
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.ResponseEntity
@@ -16,7 +20,10 @@ import org.springframework.messaging.handler.annotation.SendTo
 import org.springframework.messaging.simp.SimpMessagingTemplate
 import org.springframework.messaging.simp.annotation.SendToUser
 import org.springframework.security.core.Authentication
+import org.springframework.web.bind.annotation.DeleteMapping
 import org.springframework.web.bind.annotation.GetMapping
+import org.springframework.web.bind.annotation.PathVariable
+import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RestController
 
 @RestController
@@ -24,7 +31,10 @@ class ChatController @Autowired constructor(
     private val messageRepository: MessageRepository,
     private val activeUsersManager: ActiveUsersManager,
     private val messagesCountManager: MessagesCountManager,
-    private val messagingTemplate: SimpMessagingTemplate
+    private val messagingTemplate: SimpMessagingTemplate,
+    private val notificationRepository: NotificationRepository,
+    private val notificationService: NotificationService
+
 ) {
     @GetMapping("/chat/history")
     fun chatInit(): ResponseEntity<List<ChatMessage>> {
@@ -34,6 +44,22 @@ class ChatController @Autowired constructor(
     @GetMapping("/chat/users")
     fun usersInit(): ResponseEntity<Map<String, String>> {
         return ResponseEntity.ok(activeUsersManager.nicknames)
+    }
+
+    @GetMapping("/chat/notifications")
+    fun getNotifications(auth: Authentication): ResponseEntity<List<NotificationDTO>>{
+        val user = auth.principal as ChatUser
+        return ResponseEntity.ok(user.getEmail()?.let { notificationRepository.findByEmail(it).map { n -> NotificationDTO(n) } })
+    }
+
+    @DeleteMapping("/chat/notification/{id}")
+    fun deleteNotification(auth: Authentication, @PathVariable id: Long): ResponseEntity<String>{
+        val user = auth.principal as ChatUser
+        return if (user.getEmail()?.let { notificationService.tryDeletingNotification(it, id) } == true){
+            ResponseEntity.ok("Notification deleted successfully")
+        } else {
+            ResponseEntity.status(403).body("Notification deletion has failed")
+        }
     }
 
     @MessageMapping("/send")

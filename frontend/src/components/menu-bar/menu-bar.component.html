@@ -1,6 +1,6 @@
 <mat-toolbar color="primary" class="darkMode bar">
   <mat-toolbar-row>
-    <button mat-stroked-button [matMenuTriggerFor]="menu">
+    <button class="account-options" mat-stroked-button [matMenuTriggerFor]="menu">
       <mat-icon>account_circle</mat-icon>
       Account options
     </button>
@@ -8,6 +8,20 @@
       <button *ngIf="isUser()" mat-menu-item (click)="onChangePassword()">Change password</button>
       <button *ngIf="isUser()" mat-menu-item (click)="onChangeNickname()">Change nickname</button>
       <button mat-menu-item (click)="onSignOut()">Sign out</button>
+    </mat-menu>
+    <ng-container *ngIf="isUser">
+      <button mat-icon-button [matMenuTriggerFor]="notificationsMenu" *ngIf="notifications.length > 0">
+        <mat-icon>notifications</mat-icon>
+      </button>
+      <button mat-icon-button *ngIf="notifications.length == 0">
+        <mat-icon>notifications_none</mat-icon>
+      </button>
+    </ng-container>
+    <mat-menu class="notification-menu-class" #notificationsMenu="matMenu">
+      <div class="notification" *ngFor="let notification of notifications">
+        <div class="content">{{notification.content}}</div>
+        <mat-icon class="delete" *ngIf="!notification.locked" (click)="deleteNotification.emit(notification)">delete</mat-icon>
+      </div>
     </mat-menu>
     <span class="spacer"></span>
     <div class="account-type" [ngClass]="premium.plan" [ngSwitch]="premium.plan" *ngIf="isUser()">

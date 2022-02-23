@@ -14,7 +14,8 @@ import java.util.*
 class PremiumDataService @Autowired constructor(
     private val premiumRepository: PremiumRepository,
     private val userRepository: UserRepository,
-    private val emailService: EmailService
+    private val emailService: EmailService,
+    private val notificationService: NotificationService
     ){
 
     fun renew(user: User){
@@ -32,6 +33,7 @@ class PremiumDataService @Autowired constructor(
             premiumRepository.saveAndFlush(user.premium!!)
             userRepository.saveAndFlush(user)
             emailService.forgetRenewUrl(user.email)
+            notificationService.deleteOldWarnings(user.email)
         }
     }
 

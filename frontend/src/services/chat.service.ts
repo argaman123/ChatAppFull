@@ -33,6 +33,7 @@ export class ChatService {
           this._handleNewMessage()
           this._handleNewUser()
           this._handleMessageReply()
+          this._handleNewNotification()
           subscriber.next()
         }, err => {
           this.loginData.immediateLogout()
@@ -100,11 +101,36 @@ export class ChatService {
   }
 
   getUsers() {
-    return this.http.get(API + "users", {
+    return this.http.get<{[email :string]: string}>(API + "users", {
       withCredentials: true,
     }).pipe(first())
   }
 
+
+  private _onNewNotification = new Subject<Notification>()
+
+  private _handleNewNotification() {
+    this.stompClient?.subscribe("/user/topic/notifications", notification => {
+      this._onNewNotification.next(JSON.parse(notification.body))
+    })
+  }
+
+  getNewNotification() {
+    return this._onNewNotification.asObservable()
+  }
+
+  getNotifications() {
+    return this.http.get<Notification[]>(API + "notifications", {
+      withCredentials: true,
+    }).pipe(first())
+  }
+
+  deleteNotification(id :BigInt){
+    return this.http.delete(API + "notification/" + id, {
+      withCredentials: true,
+      responseType: "text"
+    }).pipe(first())
+  }
 
   sendMessage(content: string) {
     console.log(this.stompClient)

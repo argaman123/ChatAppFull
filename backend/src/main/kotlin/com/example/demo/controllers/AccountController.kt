@@ -1,9 +1,11 @@
 package com.example.demo.controllers
 
+import com.example.demo.entities.Notification
 import com.example.demo.services.PremiumBackgroundService
 import com.example.demo.models.ChangePasswordDTO
 import com.example.demo.models.ChatUser
 import com.example.demo.models.PremiumDTO
+import com.example.demo.repositories.NotificationRepository
 import com.example.demo.repositories.UserRepository
 import com.example.demo.services.EmailService
 import com.example.demo.services.PremiumDataService
@@ -22,7 +24,7 @@ class AccountController @Autowired constructor(
     private val userRepository: UserRepository,
     private val passwordEncoder: PasswordEncoder,
     private val premiumService: PremiumService,
-    private val emailService: EmailService
+    private val emailService: EmailService,
     ) {
 
     @PutMapping("/nickname")
@@ -86,4 +88,6 @@ class AccountController @Autowired constructor(
         }
         return ResponseEntity.status(403).body("Failed to renew. Please try renewing manually from the app.")
     }
+
+
 }

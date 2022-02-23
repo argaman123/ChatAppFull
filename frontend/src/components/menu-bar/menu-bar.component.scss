@@ -1,6 +1,10 @@
 .spacer {
   flex: 1 1 auto;
 }
+.account-options {
+  margin-right: 10px;
+}
+
 .account-type {
   height: 27px;
   border-radius: 5px;
@@ -12,9 +16,36 @@
   transform: translateX(5px);
   padding: 5px 15px;
   background: rgba(89, 89, 89, 0.55);
-  &:not(.none){
+  &:not(.none) {
     background: #ffbd34;
     color: black;
+  }
+}
+
+::ng-deep.mat-menu-panel.notification-menu-class {
+  //padding: 20px;
+  .notification {
+    font-family: "Roboto", serif;
+    font-size: 15px;
+    max-width: 300px;
+    max-height: fit-content;
+    padding: 10px 15px;
+    color: white;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    &:hover {
+      background: #565656;
+    }
+    .content {
+      border-radius: 4px;
+      user-select: none;
+    }
+    .delete {
+      user-select: none;
+      cursor: pointer;
+    }
+
   }
 }
 

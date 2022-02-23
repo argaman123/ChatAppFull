@@ -1,4 +1,4 @@
-import {Component, Input, OnInit} from '@angular/core';
+import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
 import {AuthService} from "../../services/auth.service";
 import {Router} from "@angular/router";
 import {LoginDataService} from "../../services/login-data.service";
@@ -15,11 +15,11 @@ import {ChangePasswordComponent} from "../../modals/change-password/change-passw
 })
 export class MenuBarComponent {
   @Input() premium!: PremiumStatus
-
+  @Input() notifications :Notification[] = []
+  @Output() deleteNotification = new EventEmitter<Notification>()
   constructor(private accountService: AccountService,
               private loginData: LoginDataService,
-              public dialog: MatDialog,
-              private snackBar: MatSnackBar) {
+              public dialog: MatDialog) {
 
   }
 

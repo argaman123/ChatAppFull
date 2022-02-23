@@ -6,15 +6,10 @@ import com.example.demo.static.timeToRemindTheUserToRenew
 import org.jobrunr.jobs.annotations.Job
 import org.jobrunr.scheduling.JobScheduler
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.mail.SimpleMailMessage
 import org.springframework.mail.javamail.JavaMailSender
-import org.springframework.security.crypto.encrypt.Encryptors
-import org.springframework.security.crypto.keygen.KeyGenerators
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import java.time.Instant
-import java.time.temporal.ChronoUnit
-import java.time.temporal.TemporalUnit
 
 
 @Service
@@ -60,7 +55,7 @@ class EmailService @Autowired constructor(
                 "Best regards, ChatApp")
     }
 
-    fun sendRenewedNotification(email :String){
+    fun sendAutomaticallyRenewedNotification(email :String){
         /*val msg = SimpleMailMessage()
         msg.setTo(email)
         msg.setSubject("ChatApp - Your premium plan was automatically renewed")

@@ -24,7 +24,8 @@ class PremiumBackgroundService @Autowired constructor(
     private val userRepository: UserRepository,
     private val messageRepository: MessageRepository,
     private val premiumRepository: PremiumRepository,
-    private val jobRepository: JobRepository
+    private val jobRepository: JobRepository,
+    private val notificationService: NotificationService
     ) {
 
     // Unfortunately that's the boilerplate needed each time you create a new job that runs a service function,
@@ -62,6 +63,7 @@ class PremiumBackgroundService @Autowired constructor(
             deleteOldPlanJobs(user.email)
             when (it.plan) {
                 "subscription" -> {
+                    notificationService.deleteOldWarnings(user.email)
                     runJob(it.expiration.toInstant(), "renewSubscription", user.email)
                 }
                 "one-month" -> {
@@ -83,27 +85,27 @@ class PremiumBackgroundService @Autowired constructor(
         }
     }
 
-    @Job(name = "Email %0 that he needs to renew")
+    //@Job(name = "Email %0 that he needs to renew")
     fun emailRenewWarning(email: String) {
         println("emailRenewWarning($email)")
         emailService.sendRenewWarning(email)
+        notificationService.notifyRenewWarning(email)
     }
 
-    @Job(name = "Renew %0 subscription, and email him")
+    //@Job(name = "Renew %0 subscription, and email him")
     fun renewSubscription(email: String) {
         println("renewSubscription($email)")
         userRepository.findByEmail(email)?.let {
             premiumDataService.renew(it)
-            emailService.sendRenewedNotification(email)
-        }
-        userRepository.findByEmail(email)?.let {
+            emailService.sendAutomaticallyRenewedNotification(email)
+            notificationService.notifyRenewedAutomatically(email)
             updateBackgroundJobs(it)
         }
 
         // delete from database
     }
 
-    @Job(name = "Delete %0 messages because he is no longer premium")
+    //@Job(name = "Delete %0 messages because he is no longer premium")
     fun removePremium(email: String) {
         println("removePremium($email)")
         userRepository.findByEmail(email)?.let {
@@ -113,10 +115,11 @@ class PremiumBackgroundService @Autowired constructor(
                 userRepository.saveAndFlush(it)
                 premiumRepository.deleteById(id)
             }
-        }
-        val messages = messageRepository.findByEmailOrderByDatetimeDesc(email)
-        for (i in freeUserMessageLimit until messages.size step 1) {
-            messageRepository.delete(messages[i])
+            val messages = messageRepository.findByEmailOrderByDatetimeDesc(email)
+            for (i in freeUserMessageLimit until messages.size step 1) {
+                messageRepository.delete(messages[i])
+            }
+            notificationService.deleteOldWarnings(email)
         }
     }
 
