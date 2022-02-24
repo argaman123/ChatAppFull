@@ -11,6 +11,9 @@ import org.springframework.security.core.GrantedAuthority
 import org.springframework.security.core.userdetails.UsernameNotFoundException
 import org.springframework.stereotype.Component
 
+/**
+ * A special authentication provider for [GuestUser] which accepts all requests as long as their nickname is unique.
+ */
 @Component
 class GuestAuthenticationProvider(
     private val realUserDetailsService: RealUserDetailsService,
@@ -18,11 +21,10 @@ class GuestAuthenticationProvider(
     ): AuthenticationProvider {
 
     override fun authenticate(auth: Authentication): Authentication? {
-        // probably better to generate a UUID as ID instead of just the nickname
-        try {
+        try { // Checking to see if the nickname is taken by a real user ->
             realUserDetailsService.loadUserByNickname(auth.name)
         } catch (e: UsernameNotFoundException){
-            if (!activeUsersManager.nicknames.values.contains(auth.name))
+            if (!activeUsersManager.nicknames.values.contains(auth.name)) // -> or a guest
                 return GuestAuthenticationToken(GuestUser(auth.name))
         }
         throw BadCredentialsException("Nickname is taken")

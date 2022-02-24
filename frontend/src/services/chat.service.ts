@@ -134,7 +134,7 @@ export class ChatService {
 
   sendMessage(content: string) {
     console.log(this.stompClient)
-    this.stompClient?.send("/app/send", {}, JSON.stringify({content}))
+    this.stompClient?.send("/chat/send", {}, JSON.stringify({content}))
   }
 
 }

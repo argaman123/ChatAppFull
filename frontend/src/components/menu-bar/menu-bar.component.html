@@ -9,7 +9,7 @@
       <button *ngIf="isUser()" mat-menu-item (click)="onChangeNickname()">Change nickname</button>
       <button mat-menu-item (click)="onSignOut()">Sign out</button>
     </mat-menu>
-    <ng-container *ngIf="isUser">
+    <ng-container *ngIf="isUser()">
       <button mat-icon-button [matMenuTriggerFor]="notificationsMenu" *ngIf="notifications.length > 0">
         <mat-icon>notifications</mat-icon>
       </button>

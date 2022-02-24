@@ -8,6 +8,9 @@ import org.springframework.stereotype.Component
 import java.util.*
 import org.springframework.security.core.userdetails.User as SpringUser
 
+/**
+ * Represents a real registered user, and has access to all account settings and premium plans
+ */
 class RealUser(
     user: User,
     private var userRepository: UserRepository

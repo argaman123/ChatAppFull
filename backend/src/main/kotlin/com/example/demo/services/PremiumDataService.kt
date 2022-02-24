@@ -10,15 +10,24 @@ import org.springframework.stereotype.Service
 import java.time.Instant
 import java.util.*
 
+/**
+ * A service that provides common functions that a [Premium] user need, and is responsible for storing all the information
+ * in the database.
+ */
 @Service
 class PremiumDataService @Autowired constructor(
     private val premiumRepository: PremiumRepository,
     private val userRepository: UserRepository,
     private val emailService: EmailService,
     private val notificationService: NotificationService
-    ){
+) {
 
-    fun renew(user: User){
+    /**
+     * Renews the current [Premium] plan of a [User], and makes sure to invalidate the renewal URL, and delete the
+     * now-"deprecated" warning notification that was sent to the user.
+     * @param[user] the said [User].
+     */
+    fun renew(user: User) {
         user.premium?.let {
             var newExp = Instant.now()
             val originalExp = user.premium?.expiration?.toInstant()
@@ -37,8 +46,14 @@ class PremiumDataService @Autowired constructor(
         }
     }
 
-    fun createPremium(plan: String, user: User) :Premium?{
-        return when(plan){
+    /**
+     * Generates a new [Premium] object for a user based on the chosen plan.
+     * @param[plan] the name of the [Premium] plan that the [User] chose.
+     * @param[user] the [User] that the [Premium] plan is for.
+     * @return if the name of the plan is valid returns a new [Premium] object, otherwise returns null.
+     */
+    private fun createPremium(plan: String, user: User): Premium? {
+        return when (plan) {
             "subscription", "one-month" -> {
                 val expiration = Instant.now().plus(premiumMonthPeriod)
                 Premium(expiration = Date.from(expiration), plan = plan, user = user)
@@ -52,7 +67,13 @@ class PremiumDataService @Autowired constructor(
         }
     }
 
-    fun switchPlan(user: User, plan: String){
+    /**
+     * Switches the current [Premium] plan of a [User] to a new one.
+     * In cases where the plan has not changed, renews it instead.
+     * @param[user] the user that wishes to change his [Premium] plan.
+     * @param[plan] the name of the new plan that the [User] wants to switch to.
+     */
+    fun switchPlan(user: User, plan: String) {
         user.premium?.let {
             if (it.plan == plan) return renew(user)
             it.plan = plan

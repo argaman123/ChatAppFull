@@ -22,6 +22,7 @@ import org.springframework.web.cors.CorsConfigurationSource
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource
 
 
+
 @Configuration
 @EnableWebSecurity
 class WebSecurityConfig @Autowired constructor(
@@ -29,11 +30,18 @@ class WebSecurityConfig @Autowired constructor(
     private val jwtAuthFilter: JwtAuthFilter,
     private val activeUsersManager: ActiveUsersManager
 ) : WebSecurityConfigurerAdapter() {
+
+    companion object {
+        val unauthorizedURLS = arrayOf("/auth/**", "/account/renew/**")
+        val frontendURL = "http://localhost:4200"
+        val allowedOriginsCors = listOf(frontendURL)
+    }
+
     override fun configure(http: HttpSecurity) {
         http.cors()
             .and().csrf().disable()
             .authorizeRequests()
-            .antMatchers("/auth/**", "/account/renew/**").permitAll()
+            .antMatchers(*unauthorizedURLS).permitAll()
             .anyRequest().authenticated()
             .and().sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
             .and()
@@ -47,6 +55,7 @@ class WebSecurityConfig @Autowired constructor(
             .authenticationProvider(authProvider())
     }
 
+    // A basic real user authentication provider
     @Bean
     fun authProvider(): DaoAuthenticationProvider? {
         val authProvider = DaoAuthenticationProvider()
@@ -57,7 +66,6 @@ class WebSecurityConfig @Autowired constructor(
 
     @Bean
     fun encoder(): PasswordEncoder {
-        // TODO: change the password encoder to a real one
         return BCryptPasswordEncoder(10)
     }
 
@@ -69,7 +77,7 @@ class WebSecurityConfig @Autowired constructor(
     @Bean
     fun corsConfigurationSource(): CorsConfigurationSource {
         val configuration = CorsConfiguration()
-        configuration.allowedOrigins = listOf("http://localhost:4200")
+        configuration.allowedOrigins = allowedOriginsCors
         configuration.allowedMethods = listOf("*")
         configuration.allowCredentials = true
         configuration.allowedHeaders = listOf("*")

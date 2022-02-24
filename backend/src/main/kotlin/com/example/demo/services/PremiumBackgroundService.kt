@@ -1,6 +1,8 @@
 package com.example.demo.services
 
+import com.example.demo.entities.Premium
 import com.example.demo.entities.User
+import com.example.demo.models.RealUser
 import com.example.demo.repositories.JobRepository
 import com.example.demo.repositories.MessageRepository
 import com.example.demo.repositories.PremiumRepository
@@ -16,6 +18,10 @@ import java.time.Instant
 import java.util.*
 import com.example.demo.entities.Job as JobEntity
 
+/**
+ * A service that schedules background jobs for everything that has to do with [Premium] accounts, and is responsible for
+ * keeping track of them and delete those who are not needed anymore.
+ */
 @Service
 class PremiumBackgroundService @Autowired constructor(
     private val jobScheduler: JobScheduler,
@@ -26,7 +32,7 @@ class PremiumBackgroundService @Autowired constructor(
     private val premiumRepository: PremiumRepository,
     private val jobRepository: JobRepository,
     private val notificationService: NotificationService
-    ) {
+) {
 
     // Unfortunately that's the boilerplate needed each time you create a new job that runs a service function,
     // in cases where you want to keep more information with it, so you could find it more easily in the future:
@@ -38,18 +44,33 @@ class PremiumBackgroundService @Autowired constructor(
     // ones- based of a string that represents the function name. That way I can make a function that will run all the boilerplate
     // in an abstract way for all functions.
 
+    /**
+     * An abstract [Job] that basically runs all the other real [Job]s.
+     * @param[selfID] the "selfID" of the current running job on the [JobRepository], which allows it to delete itself
+     * from the database as soon as it begins the job.
+     * @param[name] the name of the function that the job is supposed to run.
+     * @param[params] an array of all params the said function requires. Usually the first parameter will be the email
+     * of the user, so that the function will be able to find the [User], but that might not always be the case.
+     */
     @Transactional
     @Job(name = "Running %1(%2)")
-    fun runServiceFunction(selfID: String, name: String, params: Array<Any>){
+    fun runServiceFunction(selfID: String, name: String, params: Array<Any>) {
         jobRepository.deleteBySelfID(selfID)
-        when(name){
+        when (name) {
             "emailRenewWarning" -> emailRenewWarning(params[0] as String)
             "renewSubscription" -> renewSubscription(params[0] as String)
             "removePremium" -> removePremium(params[0] as String)
         }
     }
 
-    fun runJob(at: Instant, name: String, vararg params: Any){
+    /**
+     * Schedules a background [Job] to run a certain function at a certain time. It generates a unique selfID and passes
+     * it along with all the other information to [runServiceFunction].
+     * @param[at] at which time the function should run.
+     * @param[name] the name of the function that the job will run.
+     * @param[params] any amount of params that the said function requires.
+     */
+    fun runJob(at: Instant, name: String, vararg params: Any) {
         val selfID = UUID.randomUUID().toString()
         val actualParams = arrayOf(*params)
         val jobID = jobScheduler.schedule(at) {
@@ -58,6 +79,12 @@ class PremiumBackgroundService @Autowired constructor(
         jobRepository.saveAndFlush(JobEntity(selfID = selfID, jobID = jobID, email = params[0] as String, type = name))
     }
 
+    /**
+     * Makes sure all the running background jobs are up-to-date with the current [User]'s [Premium] plan, by deleting the
+     * currently scheduled ones, and scheduling new ones.
+     * Also, if a notification that was sent to a [RealUser] is no longer valid, it deletes it.
+     * @param[user] the said [User].
+     */
     fun updateBackgroundJobs(user: User) {
         user.premium?.let {
             deleteOldPlanJobs(user.email)
@@ -77,7 +104,11 @@ class PremiumBackgroundService @Autowired constructor(
         }
     }
 
-    fun deleteOldPlanJobs(email :String){
+    /**
+     * Stops and deletes all the jobs that are currently scheduled for a certain [RealUser].
+     * @param[email] the email of the [RealUser].
+     */
+    fun deleteOldPlanJobs(email: String) {
         for (job in jobRepository.findByEmail(email)) {
             println("JOB DELETED: ${job.type}")
             jobScheduler.delete(UUID.fromString(job.jobID))
@@ -85,14 +116,22 @@ class PremiumBackgroundService @Autowired constructor(
         }
     }
 
-    //@Job(name = "Email %0 that he needs to renew")
+    /**
+     * Sends an email and a notification to a [RealUser], warning him that if he won't renew his current plan soon enough,
+     * his messages will be deleted.
+     * @param[email] the email of the [RealUser].
+     */
     fun emailRenewWarning(email: String) {
         println("emailRenewWarning($email)")
         emailService.sendRenewWarning(email)
         notificationService.notifyRenewWarning(email)
     }
 
-    //@Job(name = "Renew %0 subscription, and email him")
+    /**
+     * Renews a [Premium] plan of a subscribed [RealUser] and letting him know via email and notification.
+     * Also, it already scheduled the same job to run when the current premium plan will expire.
+     * @param[email] the email of the [RealUser].
+     */
     fun renewSubscription(email: String) {
         println("renewSubscription($email)")
         userRepository.findByEmail(email)?.let {
@@ -101,11 +140,13 @@ class PremiumBackgroundService @Autowired constructor(
             notificationService.notifyRenewedAutomatically(email)
             updateBackgroundJobs(it)
         }
-
-        // delete from database
     }
 
-    //@Job(name = "Delete %0 messages because he is no longer premium")
+    /**
+     * Removes the expired [Premium] plan of a [RealUser], and with that deletes all the messages that surpass
+     * the [freeUserMessageLimit].
+     * @param[email] the email of the [RealUser].
+     */
     fun removePremium(email: String) {
         println("removePremium($email)")
         userRepository.findByEmail(email)?.let {
@@ -122,85 +163,5 @@ class PremiumBackgroundService @Autowired constructor(
             notificationService.deleteOldWarnings(email)
         }
     }
-
-/*
-    fun test(email: String) {
-        println(userRepository.findByEmail(email)?.nickname)
-    }
-
-    fun testJob() {
-        runJob(Instant.now().plus(15, ChronoUnit.SECONDS), "test", "argaman48@gmail.com")
-    }
-    fun schedule(at: Instant, email: String, name: String, run: (() -> Unit)) {
-        val selfID = UUID.randomUUID().toString()
-        val jobID = jobScheduler.schedule(at) {
-            //runner(selfID)
-        }.asUUID().toString()
-        jobRepository.saveAndFlush(
-            JobEntity(
-                selfID = selfID, jobID = jobID, type = name, email = email
-            )
-        )
-    }
-
-
-    fun runner(id :String, func: () -> Unit){
-        println(id)
-        func()
-    }
-
-    fun testJob() {
-
-val selfID2 = generateUUID()
-        val jobID2 = jobScheduler.schedule(Instant.now().plus(15, ChronoUnit.SECONDS)) {
-            test2("argaman48@gmail.com", selfID)
-        }.asUUID().toString()
-        jobRepository.saveAndFlush(
-            JobEntity(
-                selfID = selfID2, jobID = jobID2, type = "test2gfdgdfgfdgdf", email = "argaman48@gmail.com"
-            )
-        )
-
-
-        val selfID = generateUUID() // 1 - generate unique id
-        val jobID = jobScheduler.schedule(Instant.now().plus(30, ChronoUnit.SECONDS)) {
-            runner(selfID, ::test3) // 2 - pass the id to the function
-        }.asUUID().toString()
-        // 3 - save the job in the database
-        jobRepository.saveAndFlush(
-            JobEntity(
-                selfID = selfID,
-                jobID = jobID,
-                type = "test1dsfdfdsfds",
-                email = "argaman48@gmail.com"
-            )
-        )
-    }
-
-    @Transactional
-    @Job(name = "test3")
-    fun test3() {
-        println("test3")
-    }
-
-    @Transactional
-    @Job(name = "test(%0, %1)")
-    fun test(email: String, self: String) {
-        jobRepository.deleteBySelfID(self) // 4 - delete the job from the database
-        println(userRepository.findByEmail(email)?.nickname)
-    }
-
-    @Transactional
-    @Job(name = "test(%0, %1)")
-    fun test2(email: String, self: String) {
-        jobRepository.deleteBySelfID(self)
-        for (job in jobRepository.findByEmailAndTypeContaining(email, "test1")) {
-            println("JOB DELETED ${job.type}")
-            jobScheduler.delete(UUID.fromString(job.jobID))
-            jobRepository.delete(job)
-        }
-        println(userRepository.findByEmail(email)?.nickname)
-    }
-*/
 
 }

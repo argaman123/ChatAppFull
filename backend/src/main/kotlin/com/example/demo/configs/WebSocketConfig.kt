@@ -1,5 +1,6 @@
 package com.example.demo.configs
 
+import com.example.demo.configs.WebSecurityConfig.Companion.frontendURL
 import com.example.demo.unused.AuthChannelInterceptorAdapter
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.context.annotation.Bean
@@ -19,13 +20,13 @@ class WebSocketConfig @Autowired constructor(
 
     override fun configureMessageBroker(config: MessageBrokerRegistry) {
         config.enableSimpleBroker("/topic")
-        config.setApplicationDestinationPrefixes("/app")
+        config.setApplicationDestinationPrefixes("/chat")
     }
 
     override fun registerStompEndpoints(registry: StompEndpointRegistry) {
         registry
             .addEndpoint("/chat/connect")
-            .setAllowedOrigins("http://localhost:4200")
+            .setAllowedOrigins(frontendURL)
             .withSockJS()
     }
 

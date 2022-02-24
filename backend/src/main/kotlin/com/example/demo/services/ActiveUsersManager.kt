@@ -18,7 +18,12 @@ import org.springframework.web.socket.messaging.SessionDisconnectEvent
 import java.util.concurrent.ConcurrentHashMap
 import java.util.concurrent.ConcurrentLinkedQueue
 
-
+/**
+ * This component handles user connect/disconnect events, and maintains an up-to-date [HashMap] of all the users/guests
+ * that are currently connected to the chat- in the following form:
+ *
+ * id: [String] -> nickname: [String]
+ */
 @Component
 class ActiveUsersManager @Autowired constructor(
     private val messagingTemplate: SimpMessagingTemplate,
@@ -26,30 +31,52 @@ class ActiveUsersManager @Autowired constructor(
     ) {
     val nicknames: ConcurrentHashMap<String, String> = ConcurrentHashMap()
 
+    /**
+     * Lets all users when a user connects/disconnects.
+     * @param[event] holds the id and nickname of the user that will be later added to the [nicknames] map, as well as
+     * the type of the event: connected/disconnected.
+     */
     private fun sendEvent(event :UserConnectionEvent){
         messagingTemplate.convertAndSend("/topic/users", event)
     }
 
-    private fun handleSessionEvent(event :AbstractSubProtocolEvent, type :String) : Map<String, Any> {
+    /**
+     * An abstract way of handling a session connection/disconnection event.
+     * Generates a [UserConnectionEvent] and sends it to all users.
+     * @param[event] a [SessionConnectEvent] or a [SessionDisconnectEvent], which is used for extracting the user information
+     * @param[type] the type of event in a [String] format: connected/disconnected
+     * @return the [ChatUser] that was extracted from the [event]
+     */
+    private fun handleSessionEvent(event :AbstractSubProtocolEvent, type :String) : ChatUser {
         val user = ((event.user as AbstractAuthenticationToken).principal as ChatUser)
         val nickname = user.getNickname()
         val id = user.getID()
         sendEvent(UserConnectionEvent(id, nickname, type))
-        return mapOf("id" to id, "nickname" to nickname, "user" to user)
+        return user
     }
 
+    /**
+     * Handles a user connection event.
+     * Uses [handleSessionEvent] to extract the user information from the [SessionConnectEvent] and adds it to [nicknames],
+     * as well as adding it to the [messagesCountManager].
+     */
     @EventListener
     private fun handleSessionConnected(event: SessionConnectEvent){
-        val details = handleSessionEvent(event, "connected")
-        nicknames[details["id"] as String] = details["nickname"] as String
-        messagesCountManager.addUser(details["user"] as ChatUser)
+        val user = handleSessionEvent(event, "connected")
+        nicknames[user.getID()] = user.getNickname()
+        messagesCountManager.addUser(user)
     }
 
+    /**
+     * Handles a user disconnection event.
+     * Uses [handleSessionEvent] to extract the user information from the [SessionDisconnectEvent] and removes it from [nicknames],
+     * as well as removing it from the [messagesCountManager].
+     */
     @EventListener
     private fun handleSessionDisconnected(event: SessionDisconnectEvent){
-        val details = handleSessionEvent(event, "disconnected")
-        nicknames.remove(details["id"])
-        messagesCountManager.removeUser(details["user"] as ChatUser)
+        val user = handleSessionEvent(event, "disconnected")
+        nicknames.remove(user.getID())
+        messagesCountManager.removeUser(user)
     }
 
 }

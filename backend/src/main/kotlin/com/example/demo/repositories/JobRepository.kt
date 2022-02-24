@@ -6,9 +6,9 @@ import org.springframework.stereotype.Repository
 
 @Repository
 interface JobRepository : JpaRepository<Job, Long> {
-    fun findByJobID(jobID :String) :Job
+    //fun findByJobID(jobID :String) :Job
     fun findByEmail(email: String) :List<Job>
-    fun findByEmailAndTypeContaining(email: String, type: String) :List<Job>
+    //fun findByEmailAndTypeContaining(email: String, type: String) :List<Job>
     fun deleteBySelfID(selfID: String) :Long
-    fun findBySelfID(selfID: String) :Job?
+    //fun findBySelfID(selfID: String) :Job?
 }
