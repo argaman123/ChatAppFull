@@ -1,9 +1,6 @@
-import { TestComponentComponent } from '../views/test-component/test-component.component';
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import {MainPageComponent} from "../views/main-page/main-page.component";
-import {LoggedInGuard} from "../services/logged-in.guard";
-import {LoggedOutGuard} from "../services/logged-out.guard";
 import {RenewPageComponent} from "../views/renew-page/renew-page.component";
 
 const routes: Routes = [

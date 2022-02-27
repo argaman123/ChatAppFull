@@ -51,7 +51,7 @@ export class MainPageComponent implements OnInit {
             else if (event.type == "disconnected")
               delete this.activeUsers[event.email]
           })
-          this.account.isPremium().subscribe(plan => {
+          this.account.getPremiumStatus().subscribe(plan => {
             this.premium = plan
           })
         })

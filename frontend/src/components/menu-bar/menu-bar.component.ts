@@ -41,10 +41,10 @@ export class MenuBarComponent {
   }
 
   onPlan(plan: string) {
-    this.accountService.changePlan(plan).subscribe(() => {
+    this.accountService.changePremiumPlan(plan).subscribe(() => {
       console.log(plan)
       // Reloading the page will allow the backend to refresh ChatUser premium plan
-      // TODO: Fix (?) Exploit: Opening the chat in multiple windows will allow you to still have the current plan perks
+      // TODO: Fix (?) exploit: Opening the chat in multiple windows will allow you to still have the current plan perks
       window.location.reload()
     })
   }
