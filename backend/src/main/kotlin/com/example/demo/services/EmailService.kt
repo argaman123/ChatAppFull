@@ -6,6 +6,7 @@ import com.example.demo.static.timeToRemindTheUserToRenew
 import org.jobrunr.jobs.annotations.Job
 import org.jobrunr.scheduling.JobScheduler
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.mail.SimpleMailMessage
 import org.springframework.mail.javamail.JavaMailSender
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
@@ -59,41 +60,40 @@ class EmailService @Autowired constructor(
         return renewRepository.findByUrl(renewURL)?.email
     }
 
-    // TODO: Switch back to sending emails
-
     /**
      * @param[email] the email that will receive an email reminding the user to renew his premium plan before his messages
      * will be deleted.
      */
     fun sendRenewWarning(email :String){
-        /*val msg = SimpleMailMessage()
+        val msg = SimpleMailMessage()
         msg.setTo(email)
         msg.setSubject("ChatApp - A reminder to renew your one-month premium plan")
         msg.setText("Hi,\n" +
                 "We want to remind you to renew your one-month premium plan in the next two days, otherwise your messages might get deleted\n" +
                 "Click this link if you want to renew right now ${getRenewUrl(email)}\n" +
                 "Best regards, ChatApp")
-        javaMailSender.send(msg)*/
-        println("Hi,\n" +
+        javaMailSender.send(msg)
+        /*println("Hi,\n" +
                 "We want to remind you to renew your one-month premium plan in the next two days, otherwise your messages might get deleted\n" +
                 "Click this link if you want to renew right now ${getRenewUrl(email)}\n" +
-                "Best regards, ChatApp")
+                "Best regards, ChatApp")*/
     }
 
     /**
      * @param[email] the email that will receive an email letting the user know his premium plan was renewed automatically.
      */
     fun sendAutomaticallyRenewedNotification(email :String){
-        /*val msg = SimpleMailMessage()
+        val msg = SimpleMailMessage()
         msg.setTo(email)
         msg.setSubject("ChatApp - Your premium plan was automatically renewed")
         msg.setText("Hi,\n" +
                 "We want to let you know your premium plan was automatically renewed\n" +
                 "Best regards, ChatApp")
-        javaMailSender.send(msg)*/
+        javaMailSender.send(msg)
+    /*
         println("Hi,\n" +
                 "We want to let you know your premium plan was automatically renewed\n" +
-                "Best regards, ChatApp")
+                "Best regards, ChatApp")*/
     }
 
 }
