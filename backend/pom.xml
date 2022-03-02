@@ -16,6 +16,7 @@
 	<properties>
 		<java.version>11</java.version>
 		<kotlin.version>1.5.31</kotlin.version>
+		<start-class>com.example.demo.DemoApplicationKt</start-class>
 	</properties>
 	<dependencies>
 		<dependency>
@@ -39,7 +40,7 @@
 		<dependency>
 			<groupId>org.jobrunr</groupId>
 			<artifactId>jobrunr-spring-boot-starter</artifactId>
-			<version>4.0.7</version>
+			<version>3.1.2</version>
 		</dependency>
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
