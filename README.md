@@ -76,7 +76,7 @@ JOBRUNR_DASHBOARD_PORT=8000
 FRONTEND_PORT=4200
 ```
 
-Replace {MySQLPort}, {MySQLUsername}, {MySQLPassword} with values of your choice.
+Replace {MySQLUsername}, {MySQLPassword} with values of your choice.
 
 Additinally you can change the ports to your likings.
 
