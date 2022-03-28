@@ -8,7 +8,7 @@ ChatApp allows you to create an account (or login anonymously) and chat with oth
 - Maven 3.1+
 - MySQL 8.0
 
-Alternatively download the latest version of Docker Engine and skip the installation proccess.
+Alternatively download the latest version of Docker Engine and skip the installation process.
 
 ## Installation
 
@@ -19,27 +19,19 @@ Alternatively download the latest version of Docker Engine and skip the installa
 
 ## Setup
 
-First create an `application.properties` file at `backend/src/main/resources/`, the content of it should be as follows:
+First go to the `application.properties` file at `backend/src/main/resources/` and add the following lines:
 
 ```properties
-spring.jpa.properties.hibernate.dialect = org.hibernate.dialect.MySQL5InnoDBDialect
-spring.jpa.hibernate.ddl-auto = update
-org.jobrunr.background-job-server.enabled=true
-spring.mail.host=smtp.gmail.com
-spring.mail.port=587
-spring.mail.properties.mail.smtp.auth=true
-spring.mail.properties.mail.smtp.starttls.enable=true
-
 spring.mail.username={NotificationMailAddress}
 spring.mail.password={NotificationMailPassword}
 ```
 
-In order to allow premium renewal notifications via email, you must replace {NotificationMailAddress} and {NotificationMailPassword} with the email credentials of your choice.
+Where {NotificationMailAddress} and {NotificationMailPassword} are replaced with an email credentials of your choice. That will allow premium renewal notifications via email.
 
-Optionally, if you want to enable the JobRunr dashboard append the following line:
+Optionally, if you want to can also disable the JobRunr Dashboard by modifying the following line:
 
 ```properties
-org.jobrunr.dashboard.enabled=true
+org.jobrunr.dashboard.enabled=false
 ```
 
 After that, create a `secrets.kt` file at `backend/src/main/kotlin/com/example/demo/static/`, in there add the following line and change the SECRET_KEY value to a random value of your choice, it will be used when signing a JWT.
@@ -61,30 +53,15 @@ spring.datasource.password={MySQLPassword}
 
 Replace {MySQLPort}, {MySQLUsername}, {MySQLPassword} with the relevant values for your machine.
 
-### Additional steps for Docker users
+### Optional steps for Docker users
 
-Create file named `.env` inside of the project's root folder, the content of it should be as follows:
-
-```
-MYSQLDB_DATABASE=chat_app
-MYSQLDB_ROOT_NAME={MySQLUsername}
-MYSQLDB_ROOT_PASSWORD={MySQLPassword}
-MYSQLDB_DOCKER_PORT=3306
-MYSQLDB_PORT=3307
-BACKEND_PORT=8080
-JOBRUNR_DASHBOARD_PORT=8000
-FRONTEND_PORT=4200
-```
-
-Replace {MySQLUsername}, {MySQLPassword} with values of your choice.
-
-Additinally you can change the ports to your likings.
+You can choose a different MySQL username and password as well as different ports that the app will use, by modifying the `.env` inside of the project's root folder.
 
 ## Running the application
 
 ### With Docker
 
-Run ```docker-compose up``` inside the project's root folder. It will download and install all the neccessary dependencies inside of three containers, and then run the whole project for you.
+Run ```docker-compose up``` inside the project's root folder. It will download and install all the necessary dependencies inside of three containers, and then run the whole project for you.
 
 ### Without docker
 
