@@ -14,8 +14,6 @@ export class MainPageComponent implements OnInit {
   activeUsers: { [email: string]: string } = {}
   registered: boolean = true
   messageHistory: ChatMessage[] = []
-  notifications: Notification[] = []
-  premium: PremiumStatus = {plan: "none"}
 
   constructor(private chat: ChatService, private account: AccountService, private loginData: LoginDataService,
               private snackBar: MatSnackBar) {
@@ -36,12 +34,6 @@ export class MainPageComponent implements OnInit {
           this.chat.getNewMessage().subscribe(message => {
             this.messageHistory.push(message)
           })
-          this.chat.getNotifications().subscribe(notifications => {
-            this.notifications = notifications
-          })
-          this.chat.getNewNotification().subscribe(notification => {
-            this.notifications.push(notification)
-          })
           this.chat.getUsers().subscribe(allNicknames => {
             this.activeUsers = allNicknames
           })
@@ -51,9 +43,6 @@ export class MainPageComponent implements OnInit {
             else if (event.type == "disconnected")
               delete this.activeUsers[event.email]
           })
-          this.account.getPremiumStatus().subscribe(plan => {
-            this.premium = plan
-          })
         })
       }
     })
@@ -62,22 +51,6 @@ export class MainPageComponent implements OnInit {
   print(str: string) {
     this.chat.sendMessage(str)
     console.log(str)
-  }
-
-  deleteNotification(notification: Notification) {
-    if (notification.locked){
-      this.snackBar.open("Notification deletion has failed")
-      return
-    }
-    this.chat.deleteNotification(notification.id).subscribe({
-      next: value => {
-        this.snackBar.open(value)
-        this.notifications.splice(this.notifications.indexOf(notification), 1)
-      },
-      error: err => {
-        this.snackBar.open(err.error)
-      }
-    })
   }
 
 }

@@ -2,7 +2,6 @@ package com.example.demo.services
 
 import com.example.demo.models.ChatUser
 import com.example.demo.models.UserConnectionEvent
-import com.example.demo.repositories.UserRepository
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.context.event.EventListener
 import org.springframework.messaging.simp.SimpMessageHeaderAccessor
@@ -26,8 +25,7 @@ import java.util.concurrent.ConcurrentLinkedQueue
  */
 @Component
 class ActiveUsersManager @Autowired constructor(
-    private val messagingTemplate: SimpMessagingTemplate,
-    private val messagesCountManager: MessagesCountManager
+    private val messagingTemplate: SimpMessagingTemplate
     ) {
     val nicknames: ConcurrentHashMap<String, String> = ConcurrentHashMap()
 
@@ -57,26 +55,22 @@ class ActiveUsersManager @Autowired constructor(
 
     /**
      * Handles a user connection event.
-     * Uses [handleSessionEvent] to extract the user information from the [SessionConnectEvent] and adds it to [nicknames],
-     * as well as adding it to the [messagesCountManager].
+     * Uses [handleSessionEvent] to extract the user information from the [SessionConnectEvent] and adds it to [nicknames]
      */
     @EventListener
     private fun handleSessionConnected(event: SessionConnectEvent){
         val user = handleSessionEvent(event, "connected")
         nicknames[user.getID()] = user.getNickname()
-        messagesCountManager.addUser(user)
     }
 
     /**
      * Handles a user disconnection event.
-     * Uses [handleSessionEvent] to extract the user information from the [SessionDisconnectEvent] and removes it from [nicknames],
-     * as well as removing it from the [messagesCountManager].
+     * Uses [handleSessionEvent] to extract the user information from the [SessionDisconnectEvent] and removes it from [nicknames]
      */
     @EventListener
     private fun handleSessionDisconnected(event: SessionDisconnectEvent){
         val user = handleSessionEvent(event, "disconnected")
         nicknames.remove(user.getID())
-        messagesCountManager.removeUser(user)
     }
 
 }

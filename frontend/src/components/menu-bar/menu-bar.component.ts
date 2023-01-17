@@ -14,9 +14,6 @@ import {ChangePasswordComponent} from "../../modals/change-password/change-passw
   styleUrls: ['./menu-bar.component.scss']
 })
 export class MenuBarComponent {
-  @Input() premium!: PremiumStatus
-  @Input() notifications :Notification[] = []
-  @Output() deleteNotification = new EventEmitter<Notification>()
   constructor(private accountService: AccountService,
               private loginData: LoginDataService,
               public dialog: MatDialog) {
@@ -38,15 +35,6 @@ export class MenuBarComponent {
 
   onChangePassword() {
     this.dialog.open(ChangePasswordComponent)
-  }
-
-  onPlan(plan: string) {
-    this.accountService.changePremiumPlan(plan).subscribe(() => {
-      console.log(plan)
-      // Reloading the page will allow the backend to refresh ChatUser premium plan
-      // TODO: Fix (?) exploit: Opening the chat in multiple windows will allow you to still have the current plan perks
-      window.location.reload()
-    })
   }
 
 }

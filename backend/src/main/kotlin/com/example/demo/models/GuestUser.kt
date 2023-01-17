@@ -20,8 +20,5 @@ class GuestUser(private val nickname: String) : SpringUser(
     listOf(GrantedAuthority { "GUEST" })
 ), ChatUser {
     override fun getNickname(): String = nickname
-    override fun getEmail(): String? = null
-    override fun isPremium(): Boolean = false
-    override fun getType(): String = "Guest"
     override fun getID(): String = username
 }

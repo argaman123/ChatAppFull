@@ -3,11 +3,11 @@ package com.example.demo.auth
 import com.example.demo.configs.WebSecurityConfig.Companion.unauthorizedURLS
 import com.example.demo.models.GuestUser
 import com.example.demo.services.JwtUtilService
-import com.example.demo.services.RealUserDetailsService
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.security.authentication.AbstractAuthenticationToken
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken
 import org.springframework.security.core.context.SecurityContextHolder
+import org.springframework.security.core.userdetails.UserDetailsService
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher
 import org.springframework.stereotype.Component
@@ -26,8 +26,7 @@ but since I wanted to experience with different types of web securities and this
  */
 @Component
 class JwtAuthFilter @Autowired constructor(
-    val jwtUtilService: JwtUtilService,
-    val userDetailsService: RealUserDetailsService
+    val jwtUtilService: JwtUtilService
 ) : OncePerRequestFilter() {
 
     companion object {
@@ -66,16 +65,8 @@ class JwtAuthFilter @Autowired constructor(
             // If found, try to generate an Authentication Token based on its type
             token?.let {
                 val claims = jwtUtilService.extractAllClaims(it)
-                val username = claims.subject // mail for users, nickname for guests
-                val type = claims["type"]
-                var userAuthToken: AbstractAuthenticationToken? = null
-                if (type == "user") {
-                    val userDetails = userDetailsService.loadUserByUsername(username) // change to id maybe?
-                    userAuthToken = UsernamePasswordAuthenticationToken(userDetails, null, userDetails.authorities)
-                } else if (type == "guest") {
-                    userAuthToken = GuestAuthenticationToken(GuestUser(username))
-                }
-                userAuthToken?.let { authToken ->
+                val username = claims.subject // nickname
+                GuestAuthenticationToken(GuestUser(username)).let { authToken ->
                     authToken.details = WebAuthenticationDetailsSource().buildDetails(request)
                     SecurityContextHolder.getContext().authentication = authToken
                 }

@@ -13,7 +13,7 @@ import { LoginDataService } from 'src/services/login-data.service';
 })
 export class AuthenticationComponent {
 
-  currentForm = "login"
+  currentForm = "guest"
   errors = ""
   matcher = new class implements ErrorStateMatcher {
     isErrorState(control: FormControl | null, form: FormGroupDirective | NgForm | null): boolean {

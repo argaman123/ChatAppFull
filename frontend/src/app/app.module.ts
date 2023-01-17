@@ -1,4 +1,4 @@
-import { TestComponentComponent } from './../views/test-component/test-component.component';
+import { TestComponentComponent } from '../views/test-component/test-component.component';
 import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 
@@ -15,9 +15,7 @@ import {MessageAreaComponent} from "../components/message-area/message-area.comp
 import {MenuBarComponent} from "../components/menu-bar/menu-bar.component";
 import {MatInputModule} from "@angular/material/input";
 import {FormsModule, ReactiveFormsModule} from "@angular/forms";
-import {WebsocketService} from "../unused/websocket.service";
 import {HTTP_INTERCEPTORS, HttpClientModule} from "@angular/common/http";
-import {AuthGuard} from "../unused/AuthGuard";
 import {AuthService} from "../services/auth.service";
 import {MatButtonModule} from "@angular/material/button";
 import {ChatService} from "../services/chat.service";
@@ -30,7 +28,6 @@ import {ChangeNicknameComponent} from "../modals/change-nickname/change-nickname
 import {MatDialogModule} from "@angular/material/dialog";
 import {MatSnackBarModule} from "@angular/material/snack-bar";
 import {ChangePasswordComponent} from "../modals/change-password/change-password.component";
-import {RenewPageComponent} from "../views/renew-page/renew-page.component";
 import {MatButtonToggleModule} from "@angular/material/button-toggle";
 import { AuthenticationComponent } from 'src/modals/authentication/authentication.component';
 import {MatTabsModule} from "@angular/material/tabs";
@@ -45,7 +42,6 @@ import {MatTabsModule} from "@angular/material/tabs";
     MenuBarComponent,
     ChangeNicknameComponent,
     ChangePasswordComponent,
-    RenewPageComponent,
     AuthenticationComponent,
     TestComponentComponent
   ],
@@ -68,7 +64,7 @@ import {MatTabsModule} from "@angular/material/tabs";
         MatButtonToggleModule,
         MatTabsModule
     ],
-  providers: [WebsocketService, AuthGuard, AuthService, ChatService, LoginDataService, AccountService, {
+  providers: [AuthService, ChatService, LoginDataService, AccountService, {
     provide: HTTP_INTERCEPTORS,
     useFactory: function(loginData: LoginDataService) {
       return new AuthInterceptor(loginData);

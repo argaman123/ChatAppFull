@@ -3,7 +3,6 @@ package com.example.demo.configs
 import com.example.demo.auth.GuestAuthenticationProvider
 import com.example.demo.auth.JwtAuthFilter
 import com.example.demo.services.ActiveUsersManager
-import com.example.demo.services.RealUserDetailsService
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
@@ -21,20 +20,15 @@ import org.springframework.web.cors.CorsConfiguration
 import org.springframework.web.cors.CorsConfigurationSource
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource
 
-
-
 @Configuration
 @EnableWebSecurity
 class WebSecurityConfig @Autowired constructor(
-    private val realUserDetailsService: RealUserDetailsService,
     private val jwtAuthFilter: JwtAuthFilter,
     private val activeUsersManager: ActiveUsersManager
 ) : WebSecurityConfigurerAdapter() {
 
     companion object {
         val unauthorizedURLS = arrayOf("/auth/**", "/account/renew/**")
-        val frontendURL = "http://localhost:4200"
-        val allowedOriginsCors = listOf(frontendURL)
     }
 
     override fun configure(http: HttpSecurity) {
@@ -51,22 +45,7 @@ class WebSecurityConfig @Autowired constructor(
     }
 
     override fun configure(auth: AuthenticationManagerBuilder) {
-        auth.authenticationProvider(GuestAuthenticationProvider(realUserDetailsService, activeUsersManager))
-            .authenticationProvider(authProvider())
-    }
-
-    // A basic real user authentication provider
-    @Bean
-    fun authProvider(): DaoAuthenticationProvider? {
-        val authProvider = DaoAuthenticationProvider()
-        authProvider.setUserDetailsService(realUserDetailsService)
-        authProvider.setPasswordEncoder(encoder())
-        return authProvider
-    }
-
-    @Bean
-    fun encoder(): PasswordEncoder {
-        return BCryptPasswordEncoder(10)
+        auth.authenticationProvider(GuestAuthenticationProvider(activeUsersManager))
     }
 
     @Bean
@@ -77,7 +56,7 @@ class WebSecurityConfig @Autowired constructor(
     @Bean
     fun corsConfigurationSource(): CorsConfigurationSource {
         val configuration = CorsConfiguration()
-        configuration.allowedOrigins = allowedOriginsCors
+        configuration.allowedOriginPatterns = listOf("*")
         configuration.allowedMethods = listOf("*")
         configuration.allowCredentials = true
         configuration.allowedHeaders = listOf("*")

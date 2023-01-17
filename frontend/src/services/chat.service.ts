@@ -38,7 +38,6 @@ export class ChatService {
           this._handleNewMessage()
           this._handleNewUser()
           this._handleMessageReply()
-          this._handleNewNotification()
           subscriber.next()
         }, err => {
           this.loginData.immediateLogout()
@@ -140,49 +139,6 @@ export class ChatService {
   getUsers() {
     return this.http.get<{[email :string]: string}>(API + "users", {
       withCredentials: true,
-    }).pipe(first())
-  }
-
-
-  private _onNewNotification = new Subject<Notification>()
-
-  /**
-   * Notifies the getNewNotification Observable whenever a new Notification is sent by the server.
-   */
-  private _handleNewNotification() {
-    this.stompClient?.subscribe("/user/topic/notifications", notification => {
-      this._onNewNotification.next(JSON.parse(notification.body))
-    })
-  }
-
-  /**
-   * @return an Observable for every time a Notification is sent by the server. It contains the time it was sent, the
-   * contents of it, its id in case the user would want to delete it, and whether it's locked which means that the user
-   * won't be able to delete it at all.
-   */
-  getNewNotification() {
-    return this._onNewNotification.asObservable()
-  }
-
-  /**
-   * @return a one time Observable with all the notifications that were sent to the user and hasn't been deleted yet.
-   */
-  getNotifications() {
-    return this.http.get<Notification[]>(API + "notifications", {
-      withCredentials: true,
-    }).pipe(first())
-  }
-
-  /**
-   * Asks the server to delete a Notification that was sent to the user by its id.
-   * @param id the id of the Notification.
-   * @return a one time Observable with a String that contains the "status" of the operation, and whether it was successful
-   * or not (if something went wrong an error would return).
-   */
-  deleteNotification(id :BigInt){
-    return this.http.delete(API + "notification/" + id, {
-      withCredentials: true,
-      responseType: "text"
     }).pipe(first())
   }
 

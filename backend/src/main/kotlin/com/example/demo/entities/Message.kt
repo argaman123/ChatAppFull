@@ -8,7 +8,6 @@ import javax.persistence.*
 /**
  * Represents a simple message
  * @param[nickname] the nickname of the user who sent the message
- * @param[email] the email of the user who sent the message, or nothing if it's a guest
  * @param[datetime] the date and time that the message was sent
  * @param[content] the contents of the message
  */
@@ -17,9 +16,8 @@ import javax.persistence.*
 data class Message(
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY) val id :Long? = null,
     val nickname: String,
-    val email: String? = null,
     val datetime: Date = Date(),
     val content: String
 ){
-    constructor(chatMessageResponse: ChatMessageResponse, user: ChatUser) :this(nickname = user.getNickname(), email = user.getEmail(), content = chatMessageResponse.content, datetime = chatMessageResponse.datetime)
+    constructor(chatMessageResponse: ChatMessageResponse, user: ChatUser) :this(nickname = user.getNickname(), content = chatMessageResponse.content, datetime = chatMessageResponse.datetime)
 }

@@ -1,7 +1,3 @@
-<nav mat-tab-nav-bar>
-  <a mat-tab-link *ngFor="let page of ['guest', 'login', 'register']" [active]="currentForm == page"
-     (click)="switchForm(page)">{{page.toUpperCase()}}</a>
-</nav>
 <div mat-dialog-content class="fields" [formGroup]="form">
   <mat-form-field class="field" *ngIf="form.contains('email')">
     <input type="email" matInput placeholder="Email" email required formControlName="email">

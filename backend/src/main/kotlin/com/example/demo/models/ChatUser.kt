@@ -10,22 +10,7 @@ interface ChatUser {
     fun getNickname() :String
 
     /**
-     * @return the email of the chat user, if any (null for guests)
-     */
-    fun getEmail() :String?
-
-    /**
      * @return a unique identifier of a any chat user
      */
     fun getID() :String
-
-    /**
-     * @return true if the chat user is currently premium
-     */
-    fun isPremium() :Boolean
-
-    /**
-     * @return the type/name of the chat user
-     */
-    fun getType() :String
 }

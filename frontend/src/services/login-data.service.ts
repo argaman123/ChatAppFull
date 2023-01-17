@@ -6,7 +6,7 @@ import {BehaviorSubject} from "rxjs";
   providedIn: 'root'
 })
 export class LoginDataService {
-  constructor(private router: Router) {
+  constructor() {
   }
 
   requestedURL = "/"

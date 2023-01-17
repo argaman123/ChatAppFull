@@ -2,7 +2,6 @@ package com.example.demo.services
 
 import com.example.demo.models.ChatUser
 import com.example.demo.models.GuestUser
-import com.example.demo.models.RealUser
 import com.example.demo.static.SECRET_KEY
 import io.jsonwebtoken.Claims
 import io.jsonwebtoken.Jwts
@@ -36,7 +35,7 @@ class JwtUtilService {
 
     /**
      * Uses [createToken] to generate a [JWT] for a user that wishes to connect.
-     * @param[username] the nickname (for [GuestUser]) or email (for [RealUser]) of the user.
+     * @param[username] the nickname (for [GuestUser])
      * @param[type] the type of user: guest/user.
      * Provides a way to separate between tokens that were meant for real users and guests, and it will be later used
      * when generating an [AbstractAuthenticationToken].
