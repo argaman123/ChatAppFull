@@ -7,10 +7,10 @@ import org.springframework.security.core.GrantedAuthority
  * A basic authentication token for guests which stores no credentials and has a rule of GUEST
  * @param[principal] a [GuestUser] or a [String] that will be stored inside the token and used for authentication
  */
-class GuestAuthenticationToken (private var principal: Any) : AbstractAuthenticationToken(mutableListOf(GrantedAuthority { "GUEST" })) {
+class GuestAuthenticationToken (private val principal: Any, private val credentials: Any?) : AbstractAuthenticationToken(mutableListOf(GrantedAuthority { "GUEST" })) {
     init {
         super.setAuthenticated(true)
     }
-    override fun getCredentials(): Any? = null
-    override fun getPrincipal(): Any = this.principal
+    override fun getCredentials() = credentials
+    override fun getPrincipal() = principal
 }

@@ -1,22 +1,25 @@
+@import "./src/styles/colors";
+
 .container {
   display: flex;
   flex-direction: row;
   align-items: center;
-  height: 64px;
+  height: 46px;
+  background: $response;
+  border-radius: 10px;
+  margin: 10px;
+  padding: 5px 0;
+
   .message {
-    height: calc(100% - 45px);
     width: 100%;
     font-size: 20px;
     border: 0;
-    padding: 15px;
-    border-radius: 10px;
-    margin: 10px;
-    background: rgb(16, 16, 17);
-    color: #eeeeee;
-    font-family: "Roboto", serif;
+    padding: 0 10px;
+    color: $white;
+    background: none;
 
     &::placeholder {
-      font-family: "Roboto Light", serif;
+      font-family: "Default Font Light", serif !important;
       color: #a2a2a2;
     }
 
@@ -24,21 +27,25 @@
       outline: none;
     }
   }
+
   .send {
-    width: 50px;
-    height: 100%;
+    width: 40px;
+    height: 40px;
     display: flex;
-    max-width: 0;
     overflow-x: hidden;
-    color: transparent;
-    transition: all ease 0.5s;
+    transition: all ease 0.2s;
+    background-color: $disabled;
+    border-radius: 9px;
+    margin: 10px;
+    max-width: 50px;
+
     &.visible {
-      max-width: 50px;
-      color: #eeeeee;
+      background-color: $accent;
+      cursor: pointer;
     }
-    .icon {
-      font-size: 30px;
-      transform: translateX(-4px);
+
+    mat-icon {
+      font-size: 20px;
       height: 100%;
       width: 100%;
       justify-content: center;

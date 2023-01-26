@@ -12,7 +12,7 @@ import org.springframework.security.core.userdetails.User as SpringUser
 class GuestUser(private val nickname: String) : SpringUser(
     // TODO: Should work but remember to properly check
     UUID.randomUUID().toString(),
-    "none",
+    "123123",
     true,
     true,
     true,

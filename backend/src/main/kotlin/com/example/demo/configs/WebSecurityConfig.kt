@@ -2,19 +2,15 @@ package com.example.demo.configs
 
 import com.example.demo.auth.GuestAuthenticationProvider
 import com.example.demo.auth.JwtAuthFilter
-import com.example.demo.services.ActiveUsersManager
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.security.authentication.AuthenticationManager
-import org.springframework.security.authentication.dao.DaoAuthenticationProvider
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder
 import org.springframework.security.config.annotation.web.builders.HttpSecurity
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter
 import org.springframework.security.config.http.SessionCreationPolicy
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
-import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter
 import org.springframework.web.cors.CorsConfiguration
 import org.springframework.web.cors.CorsConfigurationSource
@@ -23,8 +19,8 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource
 @Configuration
 @EnableWebSecurity
 class WebSecurityConfig @Autowired constructor(
-    private val jwtAuthFilter: JwtAuthFilter,
-    private val activeUsersManager: ActiveUsersManager
+    private val guestAuthenticationProvider: GuestAuthenticationProvider,
+    private val jwtAuthFilter: JwtAuthFilter
 ) : WebSecurityConfigurerAdapter() {
 
     companion object {
@@ -45,7 +41,7 @@ class WebSecurityConfig @Autowired constructor(
     }
 
     override fun configure(auth: AuthenticationManagerBuilder) {
-        auth.authenticationProvider(GuestAuthenticationProvider(activeUsersManager))
+        auth.authenticationProvider(guestAuthenticationProvider)
     }
 
     @Bean

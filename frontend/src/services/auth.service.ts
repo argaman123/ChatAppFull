@@ -1,13 +1,8 @@
 import {Injectable} from '@angular/core';
 import {HttpClient} from "@angular/common/http";
-import {first, firstValueFrom, map, Observable} from "rxjs";
-import * as SockJS from "sockjs-client";
-import * as Stomp from "stompjs";
+import {first, Observable} from "rxjs";
 import {ChatService} from "./chat.service";
-import {Router} from "@angular/router";
 import {LoginDataService} from "./login-data.service";
-import * as Hash from "js-sha256"
-const API = "http://localhost:8080/auth/"
 
 @Injectable({
   providedIn: 'root'
@@ -27,24 +22,16 @@ export class AuthService {
   private _loginLogic(type :string, credentials :any){
     return new Observable(subscriber => {
       try {
-        this.http.post(API + (type == "user" ? "login" : type), credentials, {
+        this.http.post(this.loginData.loadApiURL("auth") + (type == "user" ? "login" : type), credentials, {
           responseType: 'text',
           withCredentials: true
         }).subscribe({
           next: expiration => {
-            this.loginData.setUserType(type)
             this.loginData.setLogin(expiration)
             subscriber.next()
-            /*this.chat.connect().subscribe({
-              next: () => {
-                subscriber.next()
-              },
-              error: err => {
-                subscriber.error(err)
-              }
-            })*/
           },
           error: err => {
+            console.log(err)
             subscriber.error(err)
           }
         })
@@ -62,40 +49,31 @@ export class AuthService {
    * @return a one time Observable that returns an error with a reason if the login failed, and otherwise returns nothing
    * and proceeds with the login operation (saving the user type and JWT expiration in the LocalStorage)
    */
-  login(credentials: { email: string, password: string }) {
-    return this._loginLogic("user", {username: credentials.email, password: Hash.sha256(credentials.password)})
+  login(credentials: { nickname: string | undefined, password: string | undefined }) {
+    return this._loginLogic("user", {nickname: credentials.nickname, password: credentials.password})
   }
 
-  /**
-   * Tries to log in to a guest account using just a nickname.
-   * @param credentials includes the nickname that the user chose.
-   * @return a one time Observable that returns an error with a reason if the login failed, and otherwise returns nothing
-   * and proceeds with the login operation (saving the user type and JWT expiration in the LocalStorage)
+  /** Tries to log out the currently logged-in user.
+   * @return a one time Observable which returns an error with a reason if the operation failed, otherwise returns nothing
+   * and proceeds to disconnect from the websocket and clear all the LocalStorage information that was saved during the "session".
    */
-  guest(credentials : { nickname :string }){
-    return this._loginLogic("guest", credentials)
-  }
-
-  /**
-   * Tries to register a new account using just a nickname, password and email entered by the user.
-   * @param credentials includes the nickname, password and email that the user chose.
-   * @return a one time Observable that returns an error with a reason if the register failed, and otherwise returns nothing.
-   */
-  register(credentials: { email: string, nickname: string, password: string }) {
-    credentials.password = Hash.sha256(credentials.password)
-    return new Observable<string>(subscriber => {
-      this.http.post(API + "register", credentials, {
-        responseType: 'text',
+  logout() {
+    return new Observable(subscriber => {
+      this.http.get(this.loginData.loadApiURL("account") + "logout", {
         withCredentials: true
       }).subscribe({
-        next: _ => {
-          console.log(_)
-          subscriber.next()
-        },
-        error: err => {
-          subscriber.error(err.error)
+          next: () => {
+            this.loginData.immediateLogout()
+            this.chat.disconnect(()=>{
+              subscriber.next()
+            })
+          },
+          error: err => {
+            console.log(err)
+            subscriber.error(err)
+          }
         }
-      })
+      )
     }).pipe(first())
   }
 

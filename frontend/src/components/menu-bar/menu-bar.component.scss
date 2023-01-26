@@ -1,79 +1,71 @@
-.spacer {
-  flex: 1 1 auto;
-}
-.account-options {
-  margin-right: 10px;
-}
-
-.account-type {
-  height: 27px;
-  border-radius: 5px;
-  font-size: 15px;
-  font-weight: bold;
-  line-height: 27px;
-  text-align: center;
-  margin-right: 0;
-  transform: translateX(5px);
-  padding: 5px 15px;
-  background: rgba(89, 89, 89, 0.55);
-  &:not(.none) {
-    background: #ffbd34;
-    color: black;
-  }
-}
-
-::ng-deep.mat-menu-panel.notification-menu-class {
-  //padding: 20px;
-  .notification {
-    font-family: "Roboto", serif;
-    font-size: 15px;
-    max-width: 300px;
-    max-height: fit-content;
-    padding: 10px 15px;
-    color: white;
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    &:hover {
-      background: #565656;
-    }
-    .content {
-      border-radius: 4px;
-      user-select: none;
-    }
-    .delete {
-      user-select: none;
-      cursor: pointer;
-    }
-
-  }
-}
-
-/*
-
-.container {
+.bar {
+  background: none;
+  color: white;
+  user-select: none;
+  -webkit-app-region: drag !important;
   display: flex;
   flex-direction: row;
-  justify-content: space-between;
-  align-items: center;
-  width: calc(100% - 20px);
-  padding: 0 10px;
-  height: 70px;
-  .settings {
+  button {
+    -webkit-app-region: no-drag;
+  }
+  mat-toolbar {
+    background: none;
+  }
+
+  .spacer {
+    flex: 1 1 auto;
+  }
+
+  .account-options {
+    margin-right: 10px;
+  }
+
+  .window-buttons {
     display: flex;
     flex-direction: row;
+    height: 45px;
+    z-index: 1001;
+    .button {
+      -webkit-app-region: no-drag;
+      cursor: pointer;
+      padding: 10px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+
+      mat-icon {
+        font-size: 25px;
+      }
+
+      &.minimize {
+        mat-icon {
+          line-height: 11px;
+          text-align: center;
+        }
+        &:hover {
+          background: rgba(110, 110, 110, 0.35);
+        }
+      }
+
+      &.fullscreen {
+        mat-icon {
+          font-size: 23px;
+          line-height: 25px;
+          text-align: center;
+        }
+        &:hover {
+          background: rgba(110, 110, 110, 0.35);
+        }
+      }
+
+      &.close {
+        &:hover {
+          background: #e72410;
+        }
+      }
+    }
   }
-  .option {
-    font-family: "Roboto", serif;
-    font-size: 20px;
-    padding: 15px;
-    user-select: none;
-    color: #eeeeee;
-  }
-  .subscribe {
-    background: gold;
-    color: black;
-    border-radius: 15px;
+  span {
+    font-family: "Default Font Semi Bold", serif !important;
   }
 }
-*/

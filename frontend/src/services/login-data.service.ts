@@ -1,17 +1,27 @@
 import {Injectable} from "@angular/core";
-import {Router} from "@angular/router";
 import {BehaviorSubject} from "rxjs";
 
 @Injectable({
   providedIn: 'root'
 })
+
 export class LoginDataService {
-  constructor() {
-  }
 
   requestedURL = "/"
+  username: string = ""
+
+  saveApiURL(url: string | undefined){
+    if (url != null)
+      localStorage.setItem("api-url", url)
+  }
+
+  loadApiURL(suffix: string | null = null){
+    return (localStorage.getItem("api-url") ?? "http://localhost:8080") + (suffix ?  "/" + suffix + "/" : "")
+  }
 
   private _loginStatus = new BehaviorSubject<boolean>(this.isLoggedIn())
+
+  constructor() {}
 
   /**
    * @return an Observable for a Boolean that represents whether the current user is logged in or not.
@@ -39,7 +49,6 @@ export class LoginDataService {
     else
       localStorage.setItem("expiration", expiration)
     if (this._loginStatus.value != this.isLoggedIn()) {
-      console.log("pushed " + !this._loginStatus.value)
       this._loginStatus.next(!this._loginStatus.value)
     }
   }
@@ -56,47 +65,13 @@ export class LoginDataService {
   }
 
   /**
-   * Saves the user type inside the LocalStorage.
-   * @param type the type of user, either "user" or "guest", deletes it if the type is null.
-   */
-  setUserType(type :string | null = null){
-    if (type == null)
-      localStorage.removeItem("type")
-    else
-      localStorage.setItem("type", type)
-  }
-
-  /**
-   * @return true if the currently connected account is a user, false otherwise (a guest).
-   */
-  isUser(){
-    return localStorage.getItem("type") == "user"
-  }
-
-  /**
-   * Deletes all the information that was saved in LocalStorage.
-   */
-  logout(){
-    this.setLogin()
-    this.setUserType()
-  }
-
-  /**
    * One implementation for any time you need to immediately log out, and clear all data.
    * Previously used in AuthInterceptor in order to quickly navigate to the login page but since it now only uses modals,
    * it isn't really needed other than just reloading the page.
    */
   immediateLogout(){
-    /*const url = this.router.routerState.snapshot.url
-    if (!url.endsWith("/login") && !url.endsWith("/register") && !url.endsWith("/guest")) {
-      this.logout()
-      this.router.navigateByUrl("/login")
-      return true
-    }
-    return false
-*/
-    this.logout()
-    window.location.reload(); // only to clear all the data inside all components
+    this.setLogin()
+    window.location.reload();
   }
 
 }

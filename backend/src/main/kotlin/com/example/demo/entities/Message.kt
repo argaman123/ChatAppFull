@@ -12,7 +12,7 @@ import javax.persistence.*
  * @param[content] the contents of the message
  */
 @Entity
-@Table(name="messages")
+@Table(name="Message")
 data class Message(
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY) val id :Long? = null,
     val nickname: String,

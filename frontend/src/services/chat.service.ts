@@ -1,14 +1,12 @@
 import {Injectable} from '@angular/core';
 import * as SockJS from "sockjs-client";
 import * as Stomp from "stompjs";
+import {Message} from "stompjs";
 import {HttpClient} from "@angular/common/http";
 import {first, map, Observable, Subject} from "rxjs";
-import {AuthService} from "./auth.service";
-import {Message} from "stompjs";
-import {Router} from "@angular/router";
 import {LoginDataService} from "./login-data.service";
 
-const API = "http://localhost:8080/chat/"
+const CHAT_API = "/chat/"
 
 @Injectable({
   providedIn: 'root'
@@ -18,6 +16,15 @@ export class ChatService {
   private stompClient: Stomp.Client | undefined
 
   constructor(private http: HttpClient, private loginData: LoginDataService) {
+  }
+
+  _handleUsername(){
+    this.http.get(this.loginData.loadApiURL("chat") + "name", {
+      responseType: 'text',
+      withCredentials: true,
+    }).subscribe(username => {
+      this.loginData.username = username
+    })
   }
 
   /**
@@ -32,12 +39,13 @@ export class ChatService {
         return
       }
       try {
-        let ws = new SockJS(API + "connect");
+        let ws = new SockJS(this.loginData.loadApiURL("chat") + "connect");
         this.stompClient = Stomp.over(ws);
         this.stompClient.connect({}, () => {
           this._handleNewMessage()
           this._handleNewUser()
           this._handleMessageReply()
+          this._handleUsername()
           subscriber.next()
         }, err => {
           this.loginData.immediateLogout()
@@ -103,7 +111,7 @@ export class ChatService {
    * @return a one time Observable with all the messages that were ever sent in the chat, in a format of ChatMessage.
    */
   getMessageHistory() {
-    return this.http.get<ChatMessage[]>(API + "history", {
+    return this.http.get<ChatMessage[]>(this.loginData.loadApiURL("chat") + "history", {
       withCredentials: true,
     }).pipe(map(messages => {
       for (const message of messages)
@@ -137,7 +145,7 @@ export class ChatService {
    * email: String -> nickname: String
    */
   getUsers() {
-    return this.http.get<{[email :string]: string}>(API + "users", {
+    return this.http.get<{[email :string]: string}>(this.loginData.loadApiURL("chat") + "users", {
       withCredentials: true,
     }).pipe(first())
   }
@@ -147,7 +155,6 @@ export class ChatService {
    * @param content the text contents of the message
    */
   sendMessage(content: string) {
-    console.log(this.stompClient)
     this.stompClient?.send("/chat/send", {}, JSON.stringify({content}))
   }
 

@@ -1,14 +1,17 @@
-<mat-toolbar color="primary" class="darkMode bar">
-  <mat-toolbar-row>
-    <button class="account-options" mat-stroked-button [matMenuTriggerFor]="menu">
-      <mat-icon>account_circle</mat-icon>
-      Account options
-    </button>
-    <mat-menu #menu="matMenu">
-      <button *ngIf="isUser()" mat-menu-item (click)="onChangePassword()">Change password</button>
-      <button *ngIf="isUser()" mat-menu-item (click)="onChangeNickname()">Change nickname</button>
-      <button mat-menu-item (click)="onSignOut()">Sign out</button>
-    </mat-menu>
-    <span class="spacer"></span>
-  </mat-toolbar-row>
-</mat-toolbar>
+<div class="darkMode bar">
+  <mat-toolbar>
+    <mat-toolbar-row>
+      <span class="">{{loginData.username}}</span>
+      <span class="spacer"></span>
+      <button mat-stroked-button class="account-options" (click)="onSignOut()">
+        <mat-icon>logout</mat-icon>
+        Sign out
+      </button>
+    </mat-toolbar-row>
+  </mat-toolbar>
+  <div class="window-buttons">
+    <span class="button minimize" (click)="onMinimize()"><mat-icon>minimize</mat-icon></span>
+    <span class="button fullscreen" (click)="onFullscreen()"><mat-icon>crop_square</mat-icon></span>
+    <span class="button close" (click)="onClose()"><mat-icon>close</mat-icon></span>
+  </div>
+</div>

@@ -1,9 +1,7 @@
-import {Component, OnInit, Pipe, PipeTransform} from '@angular/core';
+import {Component, OnInit} from '@angular/core';
 import {ChatService} from "../../services/chat.service";
-import {BehaviorSubject, Subject} from "rxjs";
-import {AccountService} from "../../services/account.service";
 import {LoginDataService} from "../../services/login-data.service";
-import {MatSnackBar} from "@angular/material/snack-bar";
+import {ElectronService} from "../../services/electron.service";
 
 @Component({
   selector: 'app-main-page',
@@ -15,12 +13,16 @@ export class MainPageComponent implements OnInit {
   registered: boolean = true
   messageHistory: ChatMessage[] = []
 
-  constructor(private chat: ChatService, private account: AccountService, private loginData: LoginDataService,
-              private snackBar: MatSnackBar) {
+  constructor(private chat: ChatService, private loginData: LoginDataService,
+              private electron: ElectronService) {
   }
 
   getNicknames() {
     return Object.values(this.activeUsers).sort()
+  }
+
+  getUsername(){
+    return this.loginData.username
   }
 
   ngOnInit(): void {
@@ -33,6 +35,8 @@ export class MainPageComponent implements OnInit {
           })
           this.chat.getNewMessage().subscribe(message => {
             this.messageHistory.push(message)
+            if (message.from != this.loginData.username)
+              this.electron.ipcRenderer.send("notification", {title: "New message from " + message.from, body: message.content})
           })
           this.chat.getUsers().subscribe(allNicknames => {
             this.activeUsers = allNicknames

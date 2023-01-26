@@ -1,43 +1,16 @@
-<div mat-dialog-content class="fields" [formGroup]="form">
-  <mat-form-field class="field" *ngIf="form.contains('email')">
-    <input type="email" matInput placeholder="Email" email required formControlName="email">
-    <mat-error *ngIf="form.get('email')?.errors?.['email']">
-      Email is not valid.
-    </mat-error>
-  </mat-form-field>
-  <mat-form-field class="field" *ngIf="form.contains('nickname')">
+<nav mat-tab-nav-bar>
+  <a mat-tab-link [active]="true">login</a>
+</nav>
+<div mat-dialog-content class="fields" [formGroup]="form" (keyup.enter)="onSubmit()">
+  <mat-form-field class="field">
     <input type="text" matInput placeholder="Nickname" required formControlName="nickname">
-    <mat-error *ngIf="form.get('nickname')?.errors?.['maxlength']">
-      Nicknames must be shorter than 10 letters.
-    </mat-error>
-    <mat-error *ngIf="form.get('nickname')?.errors?.['pattern']">
-      Nicknames must contain at least one letter, and only English letters are allowed
-    </mat-error>
   </mat-form-field>
-  <mat-form-field class="field" *ngIf="form.contains('password')">
+  <mat-form-field class="field">
     <input type="password" matInput placeholder="Password" required formControlName="password">
-    <mat-error *ngIf="form.get('password')?.errors?.['minlength'] || form.get('password')?.errors?.['maxlength']">
-      Password must have 8 to 20 characters.
-    </mat-error>
-    <mat-error *ngIf="form.get('password')?.errors?.['pattern']">
-      Password must include digits and letters.
-    </mat-error>
   </mat-form-field>
-  <mat-form-field class="field" *ngIf="form.contains('confirmedPassword')">
-    <mat-label>Confirm password</mat-label>
-    <input type="password" matInput required [errorStateMatcher]="matcher" formControlName="confirmedPassword">
-    <mat-error *ngIf="form.hasError('notSame')">
-      Passwords are not matching.
-    </mat-error>
+  <mat-form-field class="field">
+    <input type="text" matInput placeholder="Chat Server URL" required formControlName="server">
   </mat-form-field>
-  <div class="buttons field" *ngIf="form.contains('premiumPlan')">
-    <div>Premium plan:</div>
-    <mat-button-toggle-group formControlName="premiumPlan">
-      <mat-button-toggle value="none">None</mat-button-toggle>
-      <mat-button-toggle value="one-month">One month</mat-button-toggle>
-      <mat-button-toggle value="subscription">Subscription</mat-button-toggle>
-    </mat-button-toggle-group>
-  </div>
-  <mat-error style="white-space: pre-wrap; font-family: 'Roboto', serif">{{errors}}</mat-error>
+  <mat-error class="error">{{errors}}</mat-error>
   <button class="submit" mat-raised-button color="primary" (click)="onSubmit()">Submit</button>
 </div>

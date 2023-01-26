@@ -1,9 +1,17 @@
+@import "./src/styles/colors";
+
 .container {
   padding: 5px 15px;
-  height: calc(100vh - 138px);
-  max-height: calc(100vh - 138px);
+  height: calc(100vh - 170px);
+  max-height: calc(100vh - 170px);
   overflow: auto;
-  scroll-behavior: smooth;
+  display: flex;
+  flex-direction: column;
+
+  &.smooth {
+    scroll-behavior: smooth;
+  }
+
   &::-webkit-scrollbar {
     width: 10px;
   }
@@ -20,19 +28,24 @@
     flex-direction: row;
     align-items: center;
     width: max-content;
-    font-family: "Roboto Light", serif;
-    margin: 10px 0;
-    padding: 10px;
-    border-radius: 10px;
-    font-size: 20px;
-    background: #28282c;
+    margin: 4px 0;
+    padding: 7px;
+    border-radius: 0 10px 10px 10px;
+    font-size: 18px;
+    background: $response;
     color: #a2a2a2;
+
+    &.yours {
+      background: $accent;
+      align-self: flex-end;
+      border-radius: 10px 10px 0 10px;
+    }
 
     &.selected {
       &:hover {
-        background: #3d3d42;
+        background: #383f4e;
       }
-      background: #3d3d42;
+      background: #3c4557;
       .time {
         padding-left: 5px;
         display: unset;
@@ -41,32 +54,19 @@
     }
 
     &:hover {
-      background: #36363b;
+      background: #2e3440;
     }
     .time {
       opacity: 0;
       display: none;
+      color: #a2a2a2;
     }
     .content {
-      font-family: "Roboto", serif;
-      font-size: 25px;
-      color: #eeeeee;
-      padding-left: 8px;
+      font-size: 18px;
     }
-  }
-  .alert {
-    display: flex;
-    width: 100%;
-    justify-content: center;
-    align-items: center;
-    .content {
-      padding: 10px;
-      border-radius: 10px;
-      font-size: 17px;
-      background: #424248;
-      color: #c7c7c7;
-      width: max-content;
-      font-family: "Roboto Medium", serif;
+    .nickname {
+      padding-right: 8px;
+      color: #a2a2a2;
     }
   }
 }

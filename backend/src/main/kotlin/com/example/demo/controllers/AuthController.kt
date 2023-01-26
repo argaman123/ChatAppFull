@@ -1,6 +1,5 @@
 package com.example.demo.controllers
 
-import com.example.demo.entities.User
 import com.example.demo.services.JwtUtilService
 import com.example.demo.requests.GuestRequest
 import org.springframework.beans.factory.annotation.Autowired
@@ -23,20 +22,20 @@ class AuthController @Autowired constructor(
 ) {
     /**
      * Tries to authenticate a guest.
-     * @param[guestRequest] the nickname of the guest that tries to log in.
+     * @param[guestRequest] the nickname and password of the guest that tries to log in.
      * @return A [ResponseEntity] that holds a [String].
      *
      * If the login was successful returns the expiration of the JWT and stores it in a http-only cookie.
      * Else, returns the reason the login failed- which is probably because the nickname was taken (status 403).
      */
-    @PostMapping("/guest")
-    fun guest(@RequestBody guestRequest: GuestRequest, res: HttpServletResponse): ResponseEntity<String> {
+    @PostMapping("/login")
+    fun login(@RequestBody guestRequest: GuestRequest, res: HttpServletResponse): ResponseEntity<String> {
         try {
             authenticationManager.authenticate(guestRequest.getToken())
         } catch (e: BadCredentialsException) {
-            return ResponseEntity.status(403).body("Nickname is taken.")
+            return ResponseEntity.status(403).body(e.message)
         }
-        val jwt = jwtUtilService.generateToken(guestRequest.nickname, "guest")
+        val jwt = jwtUtilService.generateToken(guestRequest.nickname)
         val cookie = Cookie("jwt", jwt.token)
         cookie.path = "/"
         //cookie.secure = true

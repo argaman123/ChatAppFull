@@ -1,12 +1,7 @@
-import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
-import {AuthService} from "../../services/auth.service";
-import {Router} from "@angular/router";
+import {Component} from '@angular/core';
 import {LoginDataService} from "../../services/login-data.service";
-import {AccountService} from "../../services/account.service";
-import {MatDialog} from "@angular/material/dialog";
-import {ChangeNicknameComponent} from "../../modals/change-nickname/change-nickname.component";
-import {MatSnackBar} from "@angular/material/snack-bar";
-import {ChangePasswordComponent} from "../../modals/change-password/change-password.component";
+import {AuthService} from "../../services/auth.service";
+import {ElectronService} from "../../services/electron.service";
 
 @Component({
   selector: 'app-menu-bar',
@@ -14,27 +9,24 @@ import {ChangePasswordComponent} from "../../modals/change-password/change-passw
   styleUrls: ['./menu-bar.component.scss']
 })
 export class MenuBarComponent {
-  constructor(private accountService: AccountService,
-              private loginData: LoginDataService,
-              public dialog: MatDialog) {
-
+  fullscreen = false
+  constructor(private electron: ElectronService, public loginData: LoginDataService, private auth: AuthService) {
+    electron.on("fullscreenChange", (event :any, fullscreen: boolean) => {
+      this.fullscreen = fullscreen
+    })
   }
-
-  isUser() {
-    return this.loginData.isUser()
+  onClose(){
+    this.electron.ipcRenderer.send('close')
+  }
+  onFullscreen() {
+    this.electron.ipcRenderer.send('fullscreen', this.fullscreen)
+  }
+  onMinimize(){
+    this.electron.ipcRenderer.send('minimize')
   }
 
   onSignOut() {
-    this.accountService.logout().subscribe(() => {
-    })
-  }
-
-  onChangeNickname() {
-    this.dialog.open(ChangeNicknameComponent)
-  }
-
-  onChangePassword() {
-    this.dialog.open(ChangePasswordComponent)
+    this.auth.logout().subscribe(() => {})
   }
 
 }

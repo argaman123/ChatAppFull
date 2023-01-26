@@ -2,6 +2,7 @@ package com.example.demo.auth
 
 import com.example.demo.models.GuestUser
 import com.example.demo.services.ActiveUsersManager
+import org.springframework.beans.factory.annotation.Value
 import org.springframework.security.authentication.AuthenticationProvider
 import org.springframework.security.authentication.BadCredentialsException
 import org.springframework.security.core.Authentication
@@ -13,14 +14,18 @@ import org.springframework.stereotype.Component
  */
 @Component
 class GuestAuthenticationProvider(
+    @Value("\${global.password:123123}") private val globalPassword: String,
     private val activeUsersManager: ActiveUsersManager
     ): AuthenticationProvider {
 
     override fun authenticate(auth: Authentication): Authentication? {
-        if (!activeUsersManager.nicknames.values.contains(auth.name)) // -> or a guest
-            return GuestAuthenticationToken(GuestUser(auth.name))
+        if (globalPassword == auth.credentials)
+            if (!activeUsersManager.nicknames.values.contains(auth.name))
+                return GuestAuthenticationToken(GuestUser(auth.name), auth.credentials)
+            else
+                throw BadCredentialsException("Nickname is taken")
         else
-            throw BadCredentialsException("Nickname is taken")
+            throw BadCredentialsException("Password is incorrect")
     }
 
     override fun supports(authenticationType: Class<*>?): Boolean {

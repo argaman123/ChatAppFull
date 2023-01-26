@@ -1,6 +1,63 @@
+@import "./src/styles/colors";
+
+.container {
+  transition: width ease-out 250ms, border ease-out 200ms, height ease-out 250ms, margin ease-out 150ms, color ease-out 100ms, box-shadow 200ms;
+  width: 200px;
+  overflow: hidden;
+  padding-top: 0 !important;
+  margin-top: 8px;
+  height: calc(100% - 8px);
+
+  &.collapsed {
+    width: 40px;
+    height: 40px;
+    margin-right: 20px;
+    margin-top: 20px;
+    position: absolute;
+    z-index: 1000;
+    right: 0;
+    top: 0;
+    padding: 0 !important;
+    border-radius: 40px;
+    background-color: $background;
+    box-shadow: rgba(0, 0, 0, 0.63) 0 0 30px;
+  }
+}
+mat-icon {
+  font-size: 35px;
+  color: lightgray;
+  width: 35px;
+  height: 35px;
+  border-radius: 35px;
+  padding: 2.5px;
+  transition: background-color 100ms, transform 300ms;
+  cursor: pointer;
+
+  &:hover {
+    color: white;
+    background: rgba(255, 255, 255, 0.15);
+  }
+  &.collapsed {
+    transform: rotate(180deg);
+  }
+}
+
 .title {
   color: #a2a2a2;
+  height: 40px !important;
+  user-select: none;
+
 }
-.user {
-  color: #eeeeee;
+mat-list-item {
+  ::ng-deep span {
+    color: $white !important;
+  }
+  height: 40px !important;
 }
+
+.collapsed {
+  :not(mat-icon) {
+    color: transparent !important;
+  }
+}
+

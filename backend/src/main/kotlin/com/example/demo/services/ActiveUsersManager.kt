@@ -58,7 +58,7 @@ class ActiveUsersManager @Autowired constructor(
      * Uses [handleSessionEvent] to extract the user information from the [SessionConnectEvent] and adds it to [nicknames]
      */
     @EventListener
-    private fun handleSessionConnected(event: SessionConnectEvent){
+    fun handleSessionConnected(event: SessionConnectEvent){
         val user = handleSessionEvent(event, "connected")
         nicknames[user.getID()] = user.getNickname()
     }
@@ -68,7 +68,7 @@ class ActiveUsersManager @Autowired constructor(
      * Uses [handleSessionEvent] to extract the user information from the [SessionDisconnectEvent] and removes it from [nicknames]
      */
     @EventListener
-    private fun handleSessionDisconnected(event: SessionDisconnectEvent){
+    fun handleSessionDisconnected(event: SessionDisconnectEvent){
         val user = handleSessionEvent(event, "disconnected")
         nicknames.remove(user.getID())
     }

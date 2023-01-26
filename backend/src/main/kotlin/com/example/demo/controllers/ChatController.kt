@@ -12,6 +12,7 @@ import org.springframework.http.ResponseEntity
 import org.springframework.messaging.handler.annotation.MessageMapping
 import org.springframework.messaging.simp.SimpMessagingTemplate
 import org.springframework.security.core.Authentication
+import org.springframework.security.core.userdetails.User
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.RestController
 
@@ -24,6 +25,12 @@ class ChatController (
     private val activeUsersManager: ActiveUsersManager,
     private val messagingTemplate: SimpMessagingTemplate,
 ) {
+
+    @GetMapping("/chat/name")
+    fun getName(auth: Authentication): ResponseEntity<String> {
+        return ResponseEntity.ok((auth.principal as ChatUser).getNickname())
+    }
+
     /**
      * @return A [ResponseEntity] which holds a [List] of all the [ChatMessageResponse] from the database
      */
@@ -50,10 +57,11 @@ class ChatController (
      */
     @MessageMapping("/send")
     fun send(auth: Authentication, message: MessageRequest) {
-        val user = auth.principal as ChatUser
-        val chatMessageResponse = ChatMessageResponse(user.getNickname(), message.content)
-        messageRepository.saveAndFlush(Message(chatMessageResponse, user))
-        messagingTemplate.convertAndSend("/topic/chat", chatMessageResponse)
+        with(auth.principal as ChatUser) {
+            val chatMessageResponse = ChatMessageResponse(getNickname(), message.content)
+            messageRepository.saveAndFlush(Message(chatMessageResponse, this))
+            messagingTemplate.convertAndSend("/topic/chat", chatMessageResponse)
+        }
     }
 
 }

@@ -2,7 +2,7 @@
   <app-menu-bar *ngIf="registered" class="menu-container"></app-menu-bar>
   <div class="main-container">
     <div class="chat-container">
-      <app-messages class="messages" [messages]="messageHistory"></app-messages>
+      <app-messages class="messages" [username]="getUsername()" [messages]="messageHistory"></app-messages>
       <app-message-area (send)="print($event)" class="message-area"></app-message-area>
     </div>
     <app-user-list class="users" [users]="getNicknames()" title="Online"></app-user-list>

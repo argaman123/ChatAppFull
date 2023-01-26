@@ -1,4 +1,4 @@
-import {Component, Input, OnInit} from '@angular/core';
+import {Component, Input} from '@angular/core';
 
 @Component({
   selector: 'app-user-list',
@@ -9,7 +9,12 @@ export class UserListComponent {
 
   @Input() users!: string[]
   @Input() title!: string
+  collapsed: boolean = false
 
   constructor() { }
+
+  collapse(){
+    this.collapsed = !this.collapsed;
+  }
 
 }

@@ -1,26 +1,23 @@
+@import "./src/styles/colors";
+
 .container {
   display: flex;
   flex-direction: column;
-  background: #1e1f21;
-  .menu-container {
-    background: #26272a;
-  }
+  background: $background;
+  overflow: hidden;
   .main-container {
     display: flex;
     flex-direction: row;
+    position: relative;
+
     .chat-container {
       display: flex;
       flex-direction: column;
-      width: 100%;
-      .messages {
-        background: #17181a;
-      }
-      .message-area {
-        background: #17181a;
-      }
-    }
-    .users {
-      width: 200px;
+      width: calc(100% - 20px);
+      background: $chat-background;
+      border-radius: 10px;
+      margin: 10px;
+      box-shadow: rgba(0, 0, 0, 0.42) 0 0 30px;
     }
   }
 }

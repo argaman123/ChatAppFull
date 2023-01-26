@@ -46,27 +46,19 @@ class JwtAuthFilter @Autowired constructor(
     ) {
         // Filter only when you must
         if (SecurityContextHolder.getContext().authentication == null) {
-            var token: String? = null
+//            var token: String? = null
             val header = request.getHeader(tokenHeader)
             // Looks for the JWT in the header ->
-            if (header != null && header.startsWith(tokenPrefix)) {
-                println("header")
-                token = header.removePrefix(tokenPrefix)
-            } else { // or in the cookies
-                request.cookies?.let {
-                    for (cookie in it)
-                        if (cookie.name == "jwt") {
-                            println("cookie")
-                            token = cookie.value
-                            break
-                        }
-                }
-            }
+            val token =
+                if (header != null && header.startsWith(tokenPrefix))
+                    header.removePrefix(tokenPrefix)
+                else
+                    request.cookies?.first { it.name == "jwt" }?.value
             // If found, try to generate an Authentication Token based on its type
             token?.let {
                 val claims = jwtUtilService.extractAllClaims(it)
                 val username = claims.subject // nickname
-                GuestAuthenticationToken(GuestUser(username)).let { authToken ->
+                GuestAuthenticationToken(GuestUser(username), null).let { authToken ->
                     authToken.details = WebAuthenticationDetailsSource().buildDetails(request)
                     SecurityContextHolder.getContext().authentication = authToken
                 }

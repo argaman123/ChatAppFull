@@ -2,10 +2,10 @@ package com.example.demo.services
 
 import com.example.demo.models.ChatUser
 import com.example.demo.models.GuestUser
-import com.example.demo.static.SECRET_KEY
 import io.jsonwebtoken.Claims
 import io.jsonwebtoken.Jwts
 import io.jsonwebtoken.SignatureAlgorithm
+import org.springframework.beans.factory.annotation.Value
 import org.springframework.security.authentication.AbstractAuthenticationToken
 import org.springframework.stereotype.Service
 import java.text.SimpleDateFormat
@@ -16,21 +16,30 @@ import kotlin.collections.HashMap
  * A service that provides ways to either generate a JWT that includes a username and a type of certain [ChatUser],
  * or to extract this information from one.
  */
+
 @Service
-class JwtUtilService {
+class JwtUtilService(@Value("\${jwt.key:}") _jwtKey: String) {
 
     data class JWT (val token: String, val expiration :String)
 
     companion object {
         const val TEN_HOURS = 1000 * 60 * 60 * 10
+        fun getRandomString(length: Int) : String {
+            val allowedChars = ('A'..'Z') + ('a'..'z') + ('0'..'9')
+            return (1..length)
+                .map { allowedChars.random() }
+                .joinToString("")
+        }
     }
+
+    private val jwtKey = _jwtKey.takeUnless { it.isEmpty() } ?: getRandomString(10)
 
     /**
      * @param[token] a JWT that was generated for a certain [ChatUser].
      * @return all the [Claims] that the token included (I.e., his type and id)
      */
     fun extractAllClaims(token: String): Claims {
-        return Jwts.parser().setSigningKey(SECRET_KEY).parseClaimsJws(token).body
+        return Jwts.parser().setSigningKey(jwtKey).parseClaimsJws(token).body
     }
 
     /**
@@ -58,7 +67,7 @@ class JwtUtilService {
             .setSubject(subject)
             .setIssuedAt(Date(System.currentTimeMillis()))
             .setExpiration(expiration)
-            .signWith(SignatureAlgorithm.HS256, SECRET_KEY).compact(),
+            .signWith(SignatureAlgorithm.HS256, jwtKey).compact(),
             SimpleDateFormat("YYYY-MM-dd'T'HH:mm:ssZ").format(expiration))
 
     }

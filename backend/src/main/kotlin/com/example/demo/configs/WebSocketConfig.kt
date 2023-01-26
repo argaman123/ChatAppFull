@@ -25,11 +25,4 @@ class WebSocketConfig : WebSocketMessageBrokerConfigurer {
             .setAllowedOriginPatterns("*")
             .withSockJS()
     }
-
-
-
-/*    override fun configureClientInboundChannel(registration: ChannelRegistration) {
-        registration.setInterceptors(authChannelInterceptorAdapter)
-    }*/
-
 }
